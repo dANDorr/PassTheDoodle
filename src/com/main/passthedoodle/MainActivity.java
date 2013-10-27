@@ -24,6 +24,11 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.facebook.com/PassTheDoodle"));
         startActivity(intent);
     }
+    
+    public void goPaint(View view) {
+        Intent intent = new Intent(this, DrawingActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

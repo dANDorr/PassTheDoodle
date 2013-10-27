@@ -7,6 +7,8 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="18" />
+    
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -26,6 +28,11 @@
             android:name="com.main.passthedoodle.LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateVisible" >
+        </activity>
+        <activity
+            android:name="com.main.passthedoodle.DrawingActivity"
+            android:label="@string/title_activity_drawing"
+            android:screenOrientation="portrait" > >
         </activity>
     </application>
 
