@@ -27,12 +27,23 @@
         <activity
             android:name="com.main.passthedoodle.LoginActivity"
             android:label="@string/title_activity_login"
-            android:windowSoftInputMode="adjustResize|stateVisible" >
+            android:windowSoftInputMode="adjustResize|stateVisible" 
+			android:parentActivityName="com.main.passthedoodle.MainActivity" >
+        <!-- Parent activity meta-data to support 4.0 and lower -->
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.main.passthedoodle.MainActivity" />
+
         </activity>
         <activity
             android:name="com.main.passthedoodle.DrawingActivity"
             android:label="@string/title_activity_drawing"
-            android:screenOrientation="portrait" > >
+            android:screenOrientation="portrait"
+			android:parentActivityName="com.main.passthedoodle.MainActivity" >
+        <!-- Parent activity meta-data to support 4.0 and lower -->
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.main.passthedoodle.MainActivity" /> >
         </activity>
     </application>
 
