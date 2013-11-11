@@ -9,6 +9,8 @@
         android:targetSdkVersion="18" />
     
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -44,6 +46,19 @@
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value="com.main.passthedoodle.MainActivity" /> >
+        </activity>
+        
+        <activity
+            android:name="com.main.passthedoodle.TextActivity"
+            android:label="@string/title_activity_text"
+            android:screenOrientation="portrait"
+			android:parentActivityName="com.main.passthedoodle.MainActivity" 
+        	android:windowSoftInputMode="stateHidden" >
+        <!-- Parent activity meta-data to support 4.0 and lower -->
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.main.passthedoodle.MainActivity" /> >
+            
         </activity>
     </application>
 

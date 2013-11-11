@@ -1,0 +1,69 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFCCCCCC"
+    android:orientation="vertical"
+    tools:context=".TextActivity" >
+
+    <TextView
+        android:id="@+id/prompt_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="15"
+        android:text="TextView"
+        android:gravity="center" 
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_weight="110"
+        android:background="#FFFFFFFF"
+        android:gravity="center_vertical"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/drawing_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+			android:scaleType="fitCenter"
+			android:adjustViewBounds="true"
+            android:gravity="center"
+            android:layout_gravity="center" />
+
+        <ProgressBar
+            android:id="@+id/loading_image_circle"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+	
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="bottom"
+	    android:layout_weight="1" >
+
+        <EditText
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:textSize="20sp"      
+            android:hint="@string/hint_text_response" />
+
+        <Button
+            android:id="@+id/send_text_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="sendText"
+            android:textSize="20sp"
+            android:text="Submit" />
+
+    </LinearLayout>
+
+</LinearLayout>
