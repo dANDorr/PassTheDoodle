@@ -1,5 +1,10 @@
 package com.main.passthedoodle;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -8,25 +13,29 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
  * well.
  */
 public class LoginActivity extends Activity {
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[] {
-            "foo@example.com:hello", "bar@example.com:world" };
-
     /**
      * The default email to populate the email field with.
      */
@@ -38,7 +47,7 @@ public class LoginActivity extends Activity {
     private UserLoginTask mAuthTask = null;
 
     // Values for email and password at the time of the login attempt.
-    private String mEmail;
+    private String mUsername;
     private String mPassword;
 
     // UI references.
@@ -55,9 +64,9 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         // Set up the login form.
-        mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
+        mUsername = getIntent().getStringExtra(EXTRA_EMAIL);
         mEmailView = (EditText) findViewById(R.id.email);
-        mEmailView.setText(mEmail);
+        mEmailView.setText(mUsername);
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView
@@ -108,7 +117,7 @@ public class LoginActivity extends Activity {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        mEmail = mEmailView.getText().toString();
+        mUsername = mEmailView.getText().toString();
         mPassword = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -119,19 +128,17 @@ public class LoginActivity extends Activity {
             mPasswordView.setError(getString(R.string.error_field_required));
             focusView = mPasswordView;
             cancel = true;
-        } else if (mPassword.length() < 4) {
+        }
+        // TODO: Re-add length requirement after testing
+        /*else if (mPassword.length() < 4) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
         }
+        */
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(mEmail)) {
+        if (TextUtils.isEmpty(mUsername)) {
             mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!mEmail.contains("@")) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
         }
@@ -146,7 +153,7 @@ public class LoginActivity extends Activity {
             mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
             showProgress(true);
             mAuthTask = new UserLoginTask();
-            mAuthTask.execute((Void) null);
+            mAuthTask.execute(mUsername, mPassword);
         }
     }
 
@@ -195,35 +202,64 @@ public class LoginActivity extends Activity {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<String, Void, Integer> {
         @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+        protected Integer doInBackground(String... arg0) {
+        	HttpClient httpClient = new DefaultHttpClient();
+        	HttpPost httpPost = new HttpPost("http://passthedoodle.com/test/mlogin.php");
 
+			BasicNameValuePair usernameBasicNameValuePair = new BasicNameValuePair("username", arg0[0]);
+			BasicNameValuePair passwordBasicNameValuePAir = new BasicNameValuePair("password", arg0[1]);
+			
+			List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
+			nameValuePairList.add(usernameBasicNameValuePair);
+			nameValuePairList.add(passwordBasicNameValuePAir);
+			
+			int responseCode = 0;
+			
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
+            	// TODO: secure this or you're fired (https and cert)
+                UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nameValuePairList);
+                httpPost.setEntity(urlEncodedFormEntity);
+                
+                // send POST data
+                HttpResponse response = httpClient.execute(httpPost);
+                responseCode = response.getStatusLine().getStatusCode();
+                
+            } catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            
+            Log.d("Login", "statusCode: " + responseCode);
+            return responseCode;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(Integer headerCode) {
             mAuthTask = null;
             showProgress(false);
-
+            
+            // We could probably be more specific here about what we tell the user
+            //but this should be okay for now
+            if (headerCode == 202) { //Authorized
+            	// TODO: Alter this to send user to the game menu
+                Toast.makeText(getApplicationContext(), "Logged in!", Toast.LENGTH_LONG).show();
+            } else if (headerCode == 401) { //Unauthorized
+                Toast.makeText(getApplicationContext(), "Incorrect username/password!", Toast.LENGTH_LONG).show();
+            } else if (headerCode >= 500 && headerCode <= 600) { //Server problem (better fix it!)
+                Toast.makeText(getApplicationContext(), "Server error", Toast.LENGTH_LONG).show();            
+            } else { //Some other code (likely broken)
+            	Toast.makeText(getApplicationContext(), "Unknown error", Toast.LENGTH_LONG).show();
+            }
+            
+            /*
             if (success) {
                 finish();
             } else {
@@ -231,6 +267,7 @@ public class LoginActivity extends Activity {
                         .setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }
+            */
         }
 
         @Override
