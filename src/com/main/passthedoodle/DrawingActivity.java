@@ -1,5 +1,6 @@
 package com.main.passthedoodle;
 
+import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,6 +27,8 @@ public class DrawingActivity extends Activity implements OnClickListener {
 	//sizes
 	private float extraSmallBrush, smallBrush, mediumBrush, largeBrush, extraLargeBrush;
 
+	private boolean isLocal = true;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -286,6 +291,22 @@ public class DrawingActivity extends Activity implements OnClickListener {
                 public void onClick(DialogInterface dialog, int which){
                     // Submit picture to server
                     dialog.dismiss();
+                    
+                    // Local play - pass drawing image to TextActivity
+                    Intent intent = new Intent(DrawingActivity.this, TextActivity.class);
+                    
+                    drawView.setDrawingCacheEnabled(true);
+                    Bitmap passBitmap = drawView.getDrawingCache().copy(Bitmap.Config.ARGB_8888, false);
+                    drawView.destroyDrawingCache();
+                    
+                    ByteArrayOutputStream passStream = new ByteArrayOutputStream();
+                    passBitmap.compress(Bitmap.CompressFormat.PNG, 100, passStream);
+                    byte[] byteArray = passStream.toByteArray();
+                    
+                    // tells TextActivity which image loading method to use
+                    intent.putExtra("isLocal", true);  
+                    intent.putExtra("Image", byteArray);
+                    startActivity(intent);  
                 }
             });
             newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){

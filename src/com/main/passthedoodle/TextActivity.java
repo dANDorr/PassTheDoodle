@@ -56,7 +56,12 @@ public class TextActivity extends Activity {
 		spinningCircle = (ProgressBar) findViewById(R.id.loading_image_circle);
 		
 		promptTextView.setText(getPromptString());
-		new DownloadDrawingTask().execute(getImageURL());
+		
+		// false is default (launched from main menu)
+		if (getIntent().getBooleanExtra("isLocal", false) == true)
+			new LocalDrawingTask().execute("dummy");
+		else
+			new DownloadDrawingTask().execute(getImageURL());
 	}
 	
 	private String getPromptString() {
@@ -73,11 +78,34 @@ public class TextActivity extends Activity {
 			// display spinning progress circle before image loads
 			spinningCircle.setVisibility(View.VISIBLE);
             super.onPreExecute();
-            
 		}
         protected Bitmap doInBackground(String... urls) {
         	// params comes from the execute() call: params[0] is the url.
         	return downloadBitmap(urls[0]);
+        }
+        
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(Bitmap result) {
+        	// hide spinning progress circle once image is finished loading
+        	spinningCircle.setVisibility(View.GONE);
+            drawingImageView.setImageBitmap(result);
+       }
+    }
+	
+	private class LocalDrawingTask extends AsyncTask<String, Void, Bitmap> {
+
+		protected void onPreExecute() {
+			// display spinning progress circle before image loads
+			spinningCircle.setVisibility(View.VISIBLE);
+            super.onPreExecute();
+		}
+        protected Bitmap doInBackground(String... dummy) {
+        	// Local play - passed from DrawingActivity
+    		Bundle extras = getIntent().getExtras();
+    		byte[] byteArray = extras.getByteArray("Image");
+
+    		return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         }
         
         // onPostExecute displays the results of the AsyncTask.
