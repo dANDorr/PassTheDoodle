@@ -9,6 +9,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -251,6 +252,8 @@ public class LoginActivity extends Activity {
             if (headerCode == 202) { //Authorized
             	// TODO: Alter this to send user to the game menu
                 Toast.makeText(getApplicationContext(), "Logged in!", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+                startActivity(intent);
             } else if (headerCode == 401) { //Unauthorized
                 Toast.makeText(getApplicationContext(), "Incorrect username/password!", Toast.LENGTH_LONG).show();
             } else if (headerCode >= 500 && headerCode <= 600) { //Server problem (better fix it!)

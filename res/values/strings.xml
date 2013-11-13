@@ -8,7 +8,6 @@
     <string name="action_guest">Guest</string>
     <string name="main_title">Pass The Doodle</string>
     <string name="title_activity_drawing">Drawing</string>
-    
     <string name="start_new">New</string>
     <string name="brush">Brush</string>
     <string name="erase">Erase</string>
@@ -19,5 +18,6 @@
     <string name="lrg">Large</string>
     <string name="hint_text_response">Guess the doodle!</string>
     <string name="title_activity_text">Describe</string>
+    <string name="title_activity_game">GameActivity</string>
 
 </resources>
