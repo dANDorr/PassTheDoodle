@@ -274,7 +274,12 @@ public class DrawingActivity extends Activity implements OnClickListener {
             //new button
             AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
             newDialog.setTitle("Prompt");
-            newDialog.setMessage("This is the prompt");
+            
+            // Local play
+            Intent intent = getIntent();
+            String promptString = intent.getStringExtra("Text");
+            newDialog.setMessage(promptString);
+            
             newDialog.setNeutralButton("OK", new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog, int which){
                     dialog.dismiss();

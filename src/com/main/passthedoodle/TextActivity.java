@@ -158,8 +158,21 @@ public class TextActivity extends Activity {
     }
 	
 	public void sendText(View view) {
-	    mTextTask = new SubmitTextTask();
-	    mTextTask.execute(submitText.getText().toString());
+		
+		// false is default (launched from main menu)
+		if (getIntent().getBooleanExtra("isLocal", false) == true) {
+			Intent intent = new Intent(this, DrawingActivity.class);
+		    EditText passText = (EditText) findViewById(R.id.text);
+		    intent.putExtra("Text", passText.getText().toString());
+		    startActivity(intent);
+		}
+		else {			
+		    mTextTask = new SubmitTextTask();
+		    mTextTask.execute(submitText.getText().toString());
+		}
+		
+
+		
 	}
 	
     public class SubmitTextTask extends AsyncTask<String, Void, Integer> {
