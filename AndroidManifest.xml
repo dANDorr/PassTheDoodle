@@ -37,6 +37,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.main.passthedoodle.MainActivity" />
         </activity>
+        
+        <activity
+            android:name="com.main.passthedoodle.RegisterActivity"
+            android:label="@string/title_activity_register"
+            android:windowSoftInputMode="adjustResize|stateVisible"
+            android:parentActivityName="com.main.passthedoodle.MainActivity" >
+        <!-- Parent activity meta-data to support 4.0 and lower -->
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.main.passthedoodle.MainActivity" />
+        </activity>
+        
         <activity
             android:name="com.main.passthedoodle.DrawingActivity"
             android:label="@string/title_activity_drawing"

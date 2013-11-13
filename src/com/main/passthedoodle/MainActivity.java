@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
     }
     
     public void goRegister(View view) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.facebook.com/PassTheDoodle"));
+        Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
     
