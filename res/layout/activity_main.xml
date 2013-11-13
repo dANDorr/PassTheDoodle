@@ -51,11 +51,22 @@
         android:textSize="35sp" />
 
     <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView2"
+        android:layout_alignRight="@+id/button1"
+        android:layout_marginBottom="53dp"
+        android:onClick="goWrite"
+        android:text="Let&apos;s Guess!" />
+
+    <Button
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:layout_alignBaseline="@+id/button3"
+        android:layout_alignBottom="@+id/button3"
+        android:layout_alignLeft="@+id/textView2"
         android:onClick="goPaint"
         android:text="Let&apos;s Paint!" />
 

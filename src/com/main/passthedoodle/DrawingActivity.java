@@ -62,6 +62,14 @@ public class DrawingActivity extends Activity implements OnClickListener {
 		//save button
 		saveBtn = (ImageButton)findViewById(R.id.save_btn);
 		saveBtn.setOnClickListener(this);
+		
+		//prompt button
+        saveBtn = (ImageButton)findViewById(R.id.prompt_btn);
+        saveBtn.setOnClickListener(this);
+        
+      //save button
+        saveBtn = (ImageButton)findViewById(R.id.submit_btn);
+        saveBtn.setOnClickListener(this);
 	}
 
 	@Override
@@ -257,6 +265,36 @@ public class DrawingActivity extends Activity implements OnClickListener {
 			});
 			saveDialog.show();
 		}
+		else if(view.getId()==R.id.prompt_btn){
+            //new button
+            AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+            newDialog.setTitle("Prompt");
+            newDialog.setMessage("This is the prompt");
+            newDialog.setNeutralButton("OK", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    dialog.dismiss();
+                }
+            });
+            newDialog.show();
+        }
+		else if(view.getId()==R.id.submit_btn){
+            //new button
+            AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+            newDialog.setTitle("Submit");
+            newDialog.setMessage("Submit drawing?");
+            newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    // Submit picture to server
+                    dialog.dismiss();
+                }
+            });
+            newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    dialog.cancel();
+                }
+            });
+            newDialog.show();
+        }
 	}
 
 }

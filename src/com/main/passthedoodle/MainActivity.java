@@ -29,6 +29,11 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, DrawingActivity.class);
         startActivity(intent);
     }
+    
+    public void goWrite(View view) {
+        Intent intent = new Intent(this, TextActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

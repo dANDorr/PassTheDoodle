@@ -129,4 +129,8 @@ public class DrawingView extends View {
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         invalidate();
     }
+    
+    public void sendPicture(View view) {
+        // Do something in response to button
+    }
 }

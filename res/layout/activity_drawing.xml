@@ -15,6 +15,13 @@
         android:orientation="horizontal" >
 
         <ImageButton
+            android:id="@+id/prompt_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:contentDescription="@string/prompt"
+            android:src="@drawable/prompt" />
+
+        <ImageButton
             android:id="@+id/new_btn"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
@@ -41,6 +48,14 @@
             android:layout_height="fill_parent"
             android:contentDescription="@string/save"
             android:src="@drawable/save" />
+        
+        <ImageButton
+            android:id="@+id/submit_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:contentDescription="@string/submit"
+            android:src="@drawable/submit" />
+        
     </LinearLayout>
 
     <!-- Custom View -->
