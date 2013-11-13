@@ -9,6 +9,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -23,6 +25,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -225,8 +228,24 @@ public class LoginActivity extends Activity {
                 
                 // send POST data
                 HttpResponse response = httpClient.execute(httpPost);
-                responseCode = response.getStatusLine().getStatusCode();
                 
+                // get stuff back
+                responseCode = response.getStatusLine().getStatusCode();
+                // move this to onPostExecute()?
+                Header[] h = response.getAllHeaders();
+                for (int i = 0; i < h.length; i++) {
+                	if (h[i].getName().equals("Set-Cookie") && h[i].getValue().startsWith("PHPSESSID=")) {
+                		// TODO: this is a bad hack for now, replace with regex later
+                		String session = h[i].getValue().substring(10,36);
+                		Log.d("session", session);
+                		
+                		// save the session id for later
+                		SharedPreferences pref = getApplicationContext().getSharedPreferences("ptd", 0);
+                		Editor editor = pref.edit();
+                		editor.putString("session", session);
+                		editor.commit();
+                	}
+                }
             } catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -238,7 +257,7 @@ public class LoginActivity extends Activity {
 				e.printStackTrace();
 			}
             
-            Log.d("Login", "statusCode: " + responseCode);
+            Log.d("Status", "statusCode: " + responseCode);
             return responseCode;
         }
 
