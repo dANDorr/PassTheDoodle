@@ -17,7 +17,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:onClick="goLogin"
-        android:text="@string/action_sign_in_register" />
+        android:text="@string/action_sign_in_short" />
 
     <Button
         android:id="@+id/button2"
@@ -75,9 +75,9 @@
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button3"
-        android:layout_alignBottom="@+id/button3"
-        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignBaseline="@+id/button4"
+        android:layout_alignBottom="@+id/button4"
+        android:layout_alignLeft="@+id/button1"
         android:onClick="goPaint"
         android:text="Let&apos;s Paint!" />
 
