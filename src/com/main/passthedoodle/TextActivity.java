@@ -186,14 +186,18 @@ public class TextActivity extends Activity {
     public class SubmitTextTask extends AsyncTask<String, Void, Integer> {
         @Override
         protected Integer doInBackground(String... arg0) {
+        	SharedPreferences pref = getApplicationContext().getSharedPreferences("ptd", 0);
+        	String session = pref.getString("session", "0"); //hopefully 0 never happens, but it won't pass as a session anyway
+        	Log.d("session_post", session);
+        	
         	HttpClient httpClient = new DefaultHttpClient();
         	HttpPost httpPost = new HttpPost("http://passthedoodle.com/test/mtext.php");
 			BasicNameValuePair descriptionBasicNameValuePair = new BasicNameValuePair("description", arg0[0]);
-			//BasicNameValuePair sessionBasicNameValuePAir = new BasicNameValuePair("PHPSESSID", arg0[1]);
+			BasicNameValuePair sessionBasicNameValuePAir = new BasicNameValuePair("PHPSESSID", session);
 			
 			List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
 			nameValuePairList.add(descriptionBasicNameValuePair);
-			//nameValuePairList.add(sessionBasicNameValuePAir);
+			nameValuePairList.add(sessionBasicNameValuePAir);
 			
 			int responseCode = 0;
 			
