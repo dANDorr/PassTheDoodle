@@ -1,8 +1,20 @@
 package com.main.passthedoodle;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.UUID;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.app.Activity;
@@ -10,7 +22,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,6 +43,8 @@ public class DrawingActivity extends Activity implements OnClickListener {
 	//sizes
 	private float extraSmallBrush, smallBrush, mediumBrush, largeBrush, extraLargeBrush;
 
+	byte[] byteArray;
+	private SubmitDrawingTask mDrawingTask = null;
 	private boolean isLocal = true;
 	
 	@Override
@@ -274,7 +292,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
             //new button
             AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
             newDialog.setTitle("Prompt");
-            
+
             // Local play
             Intent intent = getIntent();
             String promptString = intent.getStringExtra("Text");
@@ -294,20 +312,23 @@ public class DrawingActivity extends Activity implements OnClickListener {
             newDialog.setMessage("Submit drawing?");
             newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog, int which){
-                    // Submit picture to server
                     dialog.dismiss();
-                    
+
                     // Local play - pass drawing image to TextActivity
                     Intent intent = new Intent(DrawingActivity.this, TextActivity.class);
-                    
+
                     drawView.setDrawingCacheEnabled(true);
                     Bitmap passBitmap = drawView.getDrawingCache().copy(Bitmap.Config.ARGB_8888, false);
                     drawView.destroyDrawingCache();
-                    
+
                     ByteArrayOutputStream passStream = new ByteArrayOutputStream();
                     passBitmap.compress(Bitmap.CompressFormat.PNG, 100, passStream);
-                    byte[] byteArray = passStream.toByteArray();
-                    
+                    byteArray = passStream.toByteArray();
+
+                    // Submit picture to server
+                    mDrawingTask = new SubmitDrawingTask();
+                    mDrawingTask.execute();
+
                     // tells TextActivity which image loading method to use
                     intent.putExtra("isLocal", true);  
                     intent.putExtra("Image", byteArray);
@@ -323,4 +344,42 @@ public class DrawingActivity extends Activity implements OnClickListener {
         }
 	}
 
+	   public class SubmitDrawingTask extends AsyncTask<String, Void, String> {
+
+	        protected String doInBackground(String... path) {
+
+	            SharedPreferences pref = getApplicationContext().getSharedPreferences("ptd", 0);
+	            String session = pref.getString("session", "0"); //hopefully 0 never happens, but it won't pass as a session anyway
+	            Log.d("session_post", session);
+
+	            String output = null;
+
+	            String ba1 = Base64.encodeToString(byteArray, 0);
+
+	            System.out.println("uploading image now -- " + ba1);
+
+	            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+	            nameValuePairs.add(new BasicNameValuePair("PHPSESSID", session));
+	            nameValuePairs.add(new BasicNameValuePair("Image", ba1));
+
+	            try {
+	                HttpClient httpclient = new DefaultHttpClient();
+	                HttpPost httppost = new HttpPost("http://passthedoodle.com/test/mtext.php");
+	                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+	                HttpResponse response = httpclient.execute(httppost);
+	                HttpEntity entity = response.getEntity();               
+	 
+	                // print response
+	                output = EntityUtils.toString(entity);
+	                Log.i("GET RESPONSE", output);
+	                     
+	                Log.e("log_tag", "Connection is good!");
+
+	            } catch (Exception e) {
+	                Log.e("log_tag", "Error in http connection " + e.toString());
+	        }
+	        return output;
+	    }
+	}
 }
