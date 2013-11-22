@@ -9,76 +9,72 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <Button
-        android:id="@+id/button1"
+    <ImageView
+        android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:onClick="goLogin"
-        android:text="@string/action_sign_in_short" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/button5"
-        android:layout_marginTop="14dp"
-        android:onClick="goRegister"
-        android:text="@string/action_guest" />
+        android:layout_alignParentTop="true"
+        android:scaleType="fitStart"
+        android:src="@drawable/ptd_logo" />
     
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/button1"
-        android:layout_marginTop="14dp"
-        android:onClick="goRegister"
-        android:text="@string/action_register_short" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="34dp"
-        android:text="(c) Shattered Screen Development" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
-        android:text="@string/main_title"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="35sp" />
+        android:onClick="goPaint"
+        android:text="Let&apos;s Paint!" />
 
     <Button
         android:id="@+id/button4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView2"
-        android:layout_alignRight="@+id/button1"
-        android:layout_marginBottom="53dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:onClick="goWrite"
         android:text="Let&apos;s Guess!" />
 
-    <Button
-        android:id="@+id/button3"
+    <TextView
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button4"
-        android:layout_alignBottom="@+id/button4"
-        android:layout_alignLeft="@+id/button1"
-        android:onClick="goPaint"
-        android:text="Let&apos;s Paint!" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="14dp"
+        android:text="(c) Shattered Screen Development" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:onClick="goRegister"
+        android:text="@string/action_guest" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button2"
+        android:layout_alignLeft="@+id/imageView1"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:onClick="goRegister"
+        android:text="@string/action_register_short" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button5"
+        android:layout_alignLeft="@+id/imageView1"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:onClick="goLogin"
+        android:text="@string/action_sign_in_short" />
 
 </RelativeLayout>
