@@ -278,7 +278,16 @@ public class DrawingActivity extends Activity implements OnClickListener {
             // Local play
             Intent intent = getIntent();
             String promptString = intent.getStringExtra("Text");
-            newDialog.setMessage(promptString);
+            if (promptString != null) {
+            	// prompt received text from TextActivity
+            	newDialog.setMessage(promptString);
+            }
+            else {
+            	// Starting new local game, generate word for prompt.
+            	// Pass in .txt filename for the appropriate difficulty level.
+            	promptString = new WordGenerator(this, "hard.txt").getWord();
+            	newDialog.setMessage(promptString);            	
+            }
             
             newDialog.setNeutralButton("OK", new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog, int which){
@@ -309,9 +318,10 @@ public class DrawingActivity extends Activity implements OnClickListener {
                     byte[] byteArray = passStream.toByteArray();
                     
                     // tells TextActivity which image loading method to use
-                    intent.putExtra("isLocal", true);  
+                    intent.putExtra("isLocal", isLocal);
                     intent.putExtra("Image", byteArray);
-                    startActivity(intent);  
+                    startActivity(intent);
+                    finish();
                 }
             });
             newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){

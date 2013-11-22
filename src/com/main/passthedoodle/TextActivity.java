@@ -173,6 +173,7 @@ public class TextActivity extends Activity {
 		    EditText passText = (EditText) findViewById(R.id.text);
 		    intent.putExtra("Text", passText.getText().toString());
 		    startActivity(intent);
+		    finish();
 		}
 		else {			
 		    mTextTask = new SubmitTextTask();
