@@ -24,7 +24,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -339,10 +338,10 @@ public class DrawingActivity extends Activity implements OnClickListener {
                     mDrawingTask.execute();
 
                     // tells TextActivity which image loading method to use
-                    intent.putExtra("isLocal", isLocal);
+                    /*intent.putExtra("isLocal", isLocal);
                     intent.putExtra("Image", byteArray);
                     startActivity(intent);
-                    finish();
+                    finish();*/
                 }
             });
             newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
@@ -364,30 +363,31 @@ public class DrawingActivity extends Activity implements OnClickListener {
 
 	            String output = null;
 
-	            String ba1 = Base64.encodeToString(byteArray, 0);
+	            String byteArrayEnc = Base64.encodeToString(byteArray, 0);
 
-	            System.out.println("uploading image now -- " + ba1);
+	            //System.out.println
+	            Log.d("log_tag", "uploading image now -- " + byteArrayEnc);
 
 	            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 	            nameValuePairs.add(new BasicNameValuePair("PHPSESSID", session));
-	            nameValuePairs.add(new BasicNameValuePair("Image", ba1));
+	            nameValuePairs.add(new BasicNameValuePair("Image", byteArrayEnc));
 
 	            try {
 	                HttpClient httpclient = new DefaultHttpClient();
-	                HttpPost httppost = new HttpPost("http://passthedoodle.com/test/mtext.php");
+	                HttpPost httppost = new HttpPost("http://passthedoodle.com/test/mdrawing.php");
 	                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 	                HttpResponse response = httpclient.execute(httppost);
-	                HttpEntity entity = response.getEntity();               
-	 
+	                HttpEntity entity = response.getEntity();
+
 	                // print response
-	                output = EntityUtils.toString(entity);
-	                Log.i("GET RESPONSE", output);
-	                     
-	                Log.e("log_tag", "Connection is good!");
+	                output = EntityUtils.toString(entity) + " (StatusCode: " + response.getStatusLine().getStatusCode() + ")";
+	                Log.d("GET RESPONSE", output);
+
+	                Log.d("log_tag", "Connection is good!");
 
 	            } catch (Exception e) {
-	                Log.e("log_tag", "Error in http connection " + e.toString());
+	                Log.e("log_tag", "Error in http connection -- " + e.toString());
 	        }
 	        return output;
 	    }
