@@ -333,15 +333,15 @@ public class DrawingActivity extends Activity implements OnClickListener {
                     byteArray = passStream.toByteArray();
 
                     if (getIntent().getBooleanExtra("isLocal", false)) {
-                        // Submit picture to server
-                        mDrawingTask = new SubmitDrawingTask();
-                        mDrawingTask.execute();
-                    } else {
-                        // tells TextActivity which image loading method to use
+                    	// tells TextActivity which image loading method to use
                         intent.putExtra("isLocal", true);
                         intent.putExtra("Image", byteArray);
                         startActivity(intent);
                         finish();
+                    } else {
+                    	// Submit picture to server
+                        mDrawingTask = new SubmitDrawingTask();
+                        mDrawingTask.execute();
                     }
                 }
             });
