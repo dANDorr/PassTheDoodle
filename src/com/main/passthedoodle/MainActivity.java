@@ -27,11 +27,18 @@ public class MainActivity extends Activity {
     
     public void goPaint(View view) {
         Intent intent = new Intent(this, DrawingActivity.class);
+        intent.putExtra("isLocal", true);
         startActivity(intent);
     }
     
     public void goWrite(View view) {
         Intent intent = new Intent(this, TextActivity.class);
+        startActivity(intent);
+    }
+    
+    public void goLocalPlay(View view) {
+        Intent intent = new Intent(this, DrawingActivity.class);
+        intent.putExtra("isLocal", false);
         startActivity(intent);
     }
 

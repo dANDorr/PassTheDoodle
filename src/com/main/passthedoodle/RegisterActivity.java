@@ -9,6 +9,9 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,10 +21,12 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -38,12 +43,14 @@ import com.main.passthedoodle.LoginActivity.UserLoginTask;
 public class RegisterActivity extends Activity {
 	
 	private UserRegisterTask mAuthTask = null;
+	private UserLoginTask login = null;
 	
 	//Values for user name, password, and confirmation of password for registration attempt
-	private String userName, password, confirmPassword;
+	private String userName, password, confirmPassword, logMeIn;
 	
 	//UI References
 	private EditText newNameView, newPasswordView, newConfirmPasswordView;
+	private CheckBox logMeInView = (CheckBox) findViewById(R.id.logmein_checkbox);
 	private View registerStatusView, registerFormView;
 	private TextView registerStatusMessageView;
 	
@@ -107,6 +114,7 @@ public class RegisterActivity extends Activity {
 		userName = newNameView.getText().toString();
 		password = newPasswordView.getText().toString();
 		confirmPassword = newConfirmPasswordView.getText().toString();
+		logMeIn = "" + logMeInView.isChecked();
 		
 		int minimumLength = 0; //minimum length for password
 		boolean cancel = false;
@@ -151,7 +159,7 @@ public class RegisterActivity extends Activity {
         	registerStatusMessageView.setText(R.string.register_progress_registering);
         	showProgress(true);
         	mAuthTask = new UserRegisterTask();
-            mAuthTask.execute(userName, password);
+            mAuthTask.execute(userName, password, logMeIn);
         }
 	}
 	
@@ -237,6 +245,11 @@ public class RegisterActivity extends Activity {
 			}
             
             Log.d("Register", "statusCode: " + responseCode);
+            
+            if (arg0[2].equals("true")) {
+                login = new UserLoginTask();
+                login.execute(arg0[0], arg0[1]);
+            }
             return responseCode;
         }
 		
@@ -250,6 +263,10 @@ public class RegisterActivity extends Activity {
             if (headerCode == 202) { //Account created
             	// TODO: Alter this to send user to the login menu
                 Toast.makeText(getApplicationContext(), "Registered", Toast.LENGTH_LONG).show();
+                //Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
             } else if (headerCode == 409) { //Account already exists
                 Toast.makeText(getApplicationContext(), "Username already in use.", Toast.LENGTH_LONG).show();
             } else if (headerCode == 400){//password too short
@@ -266,5 +283,104 @@ public class RegisterActivity extends Activity {
 	        showProgress(false);
 	    }
 	}
+	
+	/**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    public class UserLoginTask extends AsyncTask<String, Void, Integer> {
+        @Override
+        protected Integer doInBackground(String... arg0) {
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost("http://passthedoodle.com/test/mlogin.php");
+
+            BasicNameValuePair usernameBasicNameValuePair = new BasicNameValuePair("username", arg0[0]);
+            BasicNameValuePair passwordBasicNameValuePAir = new BasicNameValuePair("password", arg0[1]);
+            
+            List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
+            nameValuePairList.add(usernameBasicNameValuePair);
+            nameValuePairList.add(passwordBasicNameValuePAir);
+            
+            int responseCode = 0;
+            
+            try {
+                // TODO: secure this or you're fired (https and cert)
+                UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nameValuePairList);
+                httpPost.setEntity(urlEncodedFormEntity);
+                
+                // send POST data
+                HttpResponse response = httpClient.execute(httpPost);
+                
+                // get stuff back
+                responseCode = response.getStatusLine().getStatusCode();
+                // move this to onPostExecute()?
+                Header[] h = response.getAllHeaders();
+                for (int i = 0; i < h.length; i++) {
+                    if (h[i].getName().equals("Set-Cookie") && h[i].getValue().startsWith("PHPSESSID=")) {
+                        // TODO: this is a bad hack for now, replace with regex later
+                        String session = h[i].getValue().substring(10,36);
+                        Log.d("session", session);
+                        
+                        // save the session id for later
+                        SharedPreferences pref = getApplicationContext().getSharedPreferences("ptd", 0);
+                        Editor editor = pref.edit();
+                        editor.putString("session", session);
+                        editor.commit();
+                    }
+                }
+            } catch (UnsupportedEncodingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
+            Log.d("Status", "statusCode: " + responseCode);
+            return responseCode;
+        }
+
+        @Override
+        protected void onPostExecute(Integer headerCode) {
+            mAuthTask = null;
+            showProgress(false);
+            
+            // We could probably be more specific here about what we tell the user
+            //but this should be okay for now
+            if (headerCode == 202) { //Authorized
+                // TODO: Alter this to send user to the game menu
+                Toast.makeText(getApplicationContext(), "Logged in!", Toast.LENGTH_LONG).show();
+                //Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
+            } else if (headerCode == 401) { //Unauthorized
+                Toast.makeText(getApplicationContext(), "Incorrect username/password!", Toast.LENGTH_LONG).show();
+            } else if (headerCode >= 500 && headerCode <= 600) { //Server problem (better fix it!)
+                Toast.makeText(getApplicationContext(), "Server error", Toast.LENGTH_LONG).show();            
+            } else { //Some other code (likely broken)
+                Toast.makeText(getApplicationContext(), "Unknown error", Toast.LENGTH_LONG).show();
+            }
+            
+            /*
+            if (success) {
+                finish();
+            } else {
+                mPasswordView
+                        .setError(getString(R.string.error_incorrect_password));
+                mPasswordView.requestFocus();
+            }
+            */
+        }
+
+        @Override
+        protected void onCancelled() {
+            mAuthTask = null;
+            showProgress(false);
+        }
+    }
 
 }

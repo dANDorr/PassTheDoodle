@@ -44,7 +44,6 @@ public class DrawingActivity extends Activity implements OnClickListener {
 
 	byte[] byteArray;
 	private SubmitDrawingTask mDrawingTask = null;
-	private boolean isLocal = true;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -333,15 +332,17 @@ public class DrawingActivity extends Activity implements OnClickListener {
                     passBitmap.compress(Bitmap.CompressFormat.PNG, 100, passStream);
                     byteArray = passStream.toByteArray();
 
-                    // Submit picture to server
-                    mDrawingTask = new SubmitDrawingTask();
-                    mDrawingTask.execute();
-
-                    // tells TextActivity which image loading method to use
-                    /*intent.putExtra("isLocal", isLocal);
-                    intent.putExtra("Image", byteArray);
-                    startActivity(intent);
-                    finish();*/
+                    if (getIntent().getBooleanExtra("isLocal", false)) {
+                        // Submit picture to server
+                        mDrawingTask = new SubmitDrawingTask();
+                        mDrawingTask.execute();
+                    } else {
+                        // tells TextActivity which image loading method to use
+                        intent.putExtra("isLocal", true);
+                        intent.putExtra("Image", byteArray);
+                        startActivity(intent);
+                        finish();
+                    }
                 }
             });
             newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
@@ -353,43 +354,57 @@ public class DrawingActivity extends Activity implements OnClickListener {
         }
 	}
 
-	   public class SubmitDrawingTask extends AsyncTask<String, Void, String> {
+	public class SubmitDrawingTask extends AsyncTask<String, Void, Integer> {
+	    @Override
+        protected Integer doInBackground(String... path) {
 
-	        protected String doInBackground(String... path) {
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("ptd", 0);
+            String session = pref.getString("session", "0"); //hopefully 0 never happens, but it won't pass as a session anyway
+            Log.d("session_post", session);
 
-	            SharedPreferences pref = getApplicationContext().getSharedPreferences("ptd", 0);
-	            String session = pref.getString("session", "0"); //hopefully 0 never happens, but it won't pass as a session anyway
-	            Log.d("session_post", session);
+            String output = null;
+            int responseCode = 0;
 
-	            String output = null;
+            String byteArrayEnc = Base64.encodeToString(byteArray, 0);
 
-	            String byteArrayEnc = Base64.encodeToString(byteArray, 0);
+            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+            nameValuePairs.add(new BasicNameValuePair("PHPSESSID", session));
+            nameValuePairs.add(new BasicNameValuePair("Image", byteArrayEnc));
 
-	            //System.out.println
-	            Log.d("log_tag", "uploading image now -- " + byteArrayEnc);
+            try {
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpPost httppost = new HttpPost("http://passthedoodle.com/test/mdrawing.php");
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-	            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-	            nameValuePairs.add(new BasicNameValuePair("PHPSESSID", session));
-	            nameValuePairs.add(new BasicNameValuePair("Image", byteArrayEnc));
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity entity = response.getEntity();
 
-	            try {
-	                HttpClient httpclient = new DefaultHttpClient();
-	                HttpPost httppost = new HttpPost("http://passthedoodle.com/test/mdrawing.php");
-	                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                // print response
+                output = EntityUtils.toString(entity);
+                responseCode = response.getStatusLine().getStatusCode();
+                Log.d("GET RESPONSE", output + " -- statuscode: " + responseCode);
 
-	                HttpResponse response = httpclient.execute(httppost);
-	                HttpEntity entity = response.getEntity();
-
-	                // print response
-	                output = EntityUtils.toString(entity) + " (StatusCode: " + response.getStatusLine().getStatusCode() + ")";
-	                Log.d("GET RESPONSE", output);
-
-	                Log.d("log_tag", "Connection is good!");
-
-	            } catch (Exception e) {
-	                Log.e("log_tag", "Error in http connection -- " + e.toString());
-	        }
-	        return output;
+            } catch (Exception e) {
+                Log.e("log_tag", "Error in http connection -- " + e.toString());
+            }
+            return responseCode;
 	    }
+	    
+	    @Override
+        protected void onPostExecute(Integer headerCode) {
+            
+            if (headerCode == 202) { //Authorized
+                // TODO: Alter this to send user to the game menu
+                Toast.makeText(getApplicationContext(), "Drawing submitted!", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+                startActivity(intent);
+            } else if (headerCode == 401) { //Unauthorized
+                Toast.makeText(getApplicationContext(), "Incorrect username/password!", Toast.LENGTH_LONG).show();
+            } else if (headerCode >= 500 && headerCode <= 600) { //Server problem (better fix it!)
+                Toast.makeText(getApplicationContext(), "Server error", Toast.LENGTH_LONG).show();            
+            } else { //Some other code (likely broken)
+                Toast.makeText(getApplicationContext(), "Unknown error", Toast.LENGTH_LONG).show();
+            }
+        }
 	}
 }

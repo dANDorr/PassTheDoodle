@@ -77,4 +77,13 @@
         android:onClick="goLogin"
         android:text="@string/action_sign_in_short" />
 
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button3"
+        android:layout_centerHorizontal="true"
+        android:onClick="goLocalPlay"
+        android:text="Local Play" />
+
 </RelativeLayout>
