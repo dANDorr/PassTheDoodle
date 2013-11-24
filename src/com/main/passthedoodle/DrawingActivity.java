@@ -328,9 +328,9 @@ public class DrawingActivity extends Activity implements OnClickListener {
                     Bitmap passBitmap = drawView.getDrawingCache().copy(Bitmap.Config.ARGB_8888, false);
                     drawView.destroyDrawingCache();
 
-                    ByteArrayOutputStream passStream = new ByteArrayOutputStream();
-                    passBitmap.compress(Bitmap.CompressFormat.PNG, 100, passStream);
-                    byteArray = passStream.toByteArray();
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    passBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byteArray = stream.toByteArray();
 
                     if (getIntent().getBooleanExtra("isLocal", false)) {
                         // Submit picture to server
@@ -375,12 +375,10 @@ public class DrawingActivity extends Activity implements OnClickListener {
                 HttpClient httpclient = new DefaultHttpClient();
                 HttpPost httppost = new HttpPost("http://passthedoodle.com/test/mdrawing.php");
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
                 HttpResponse response = httpclient.execute(httppost);
-                HttpEntity entity = response.getEntity();
 
                 // print response
-                output = EntityUtils.toString(entity);
+                output = EntityUtils.toString(response.getEntity());
                 responseCode = response.getStatusLine().getStatusCode();
                 Log.d("GET RESPONSE", output + " -- statuscode: " + responseCode);
 

@@ -41,6 +41,11 @@ public class MainActivity extends Activity {
         intent.putExtra("isLocal", false);
         startActivity(intent);
     }
+    
+    public void goGame(View view) {
+        Intent intent = new Intent(this, GameActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
