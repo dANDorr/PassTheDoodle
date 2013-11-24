@@ -28,11 +28,23 @@
         android:text="Let&apos;s Guess!" />
 
     <Button
+        android:id="@+id/button_game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button_local_play"
+        android:layout_alignBottom="@+id/button_local_play"
+        android:layout_alignLeft="@+id/button_guess"
+        android:layout_alignParentRight="true"
+        android:onClick="goGame"
+        android:text="Game" />
+
+    <Button
         android:id="@+id/button_local_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button_paint"
+        android:layout_alignRight="@+id/button_paint"
         android:layout_below="@+id/button_paint"
-        android:layout_centerHorizontal="true"
         android:onClick="goLocalPlay"
         android:text="Local Play" />
 

@@ -130,6 +130,14 @@ public class MainActivity extends FragmentActivity {
 				                startActivity(intent);
 				            }
 						});
+			rootView.findViewById(R.id.button_game)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(getActivity(), GameActivity.class);
+                                startActivity(intent);
+                            }
+                        });
 			return rootView;
     	}
     }
@@ -141,14 +149,10 @@ public class MainActivity extends FragmentActivity {
     		return rootView;
     	}
     }
-<<<<<<< HEAD
     
     public void goGame(View view) {
         Intent intent = new Intent(this, GameActivity.class);
         startActivity(intent);
     }
-=======
+
 }
->>>>>>> ba29e793c85995bc8a560ee39ee612913b58f376
-
-
