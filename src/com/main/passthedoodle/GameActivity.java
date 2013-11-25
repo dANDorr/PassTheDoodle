@@ -53,7 +53,7 @@ import android.widget.Toast;
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_game);
-
+            
             // Hashmap for ListView
             gamesList = new ArrayList<HashMap<String, String>>();
 
@@ -77,14 +77,21 @@ import android.widget.Toast;
                     // Starting new intent
                     Intent in = new Intent(getApplicationContext(),
                             GameActivity.class); ///EditGameActivity.class
-                    // sending pid to next activity
+                    // sending id to next activity
                     in.putExtra(TAG_ID, id);
                     
                     // starting new activity and expecting some response back
                     startActivityForResult(in, 100);
                 }
             });
+        }
+        
+        public void onClick_Add(View v) {
+            //TODO: implement add game
+        }
 
+        public void onClick_Refresh(View v) {
+            //TODO: implement refresh games
         }
 
         // Response from Edit Game Activity
@@ -92,7 +99,7 @@ import android.widget.Toast;
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
             // if result code 100
-            if (resultCode == 100) {
+            if (resultCode == 100) { 
                 // if result code 100 is received 
                 // means user edited/deleted game
                 // reload this screen again
@@ -100,7 +107,6 @@ import android.widget.Toast;
                 finish();
                 startActivity(intent);
             }
-
         }
 
         /**
@@ -132,10 +138,9 @@ import android.widget.Toast;
                 params.add(new BasicNameValuePair("PHPSESSID", session));
                 // getting JSON string from URL
                 JSONObject json = jParser.makeHttpRequest(url_list_games, "POST", params);
-                
                 // Check your log cat for JSON response
                 Log.d("All Games: ", json.toString());
-
+                
                 try {
                     // Checking for SUCCESS TAG
                     int success = json.getInt(TAG_SUCCESS);
@@ -170,20 +175,24 @@ import android.widget.Toast;
                             // adding HashList to ArrayList
                             gamesList.add(map);
                         }
-                    } else {
-                        // no games found
-                        Toast.makeText(getApplicationContext(), "No Games Found.", Toast.LENGTH_LONG).show();
-                        // Launch Add New Game Activity
-//                        Intent i = new Intent(getApplicationContext(),
-//                                GameActivity.class); //NewGameActivity.class
-                        // Closing all previous activities
-//                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                        startActivity(i);
+                    } else if (success == 0) {
+                        return "1";
+                    } else if (success == 2) {
+                        return "2";
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    System.out.print("JSON Exception occurred");
+                    Toast.makeText(getApplicationContext(), "JSON Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
+                } catch (NullPointerException n) {
+                    n.printStackTrace();
+                    System.out.print("Null Pointer Exception occurred");
+                    Toast.makeText(getApplicationContext(), "Null Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
+                } catch (RuntimeException r) {
+                    r.printStackTrace();
+                    System.out.print("Runtime Exception occurred");
+                    Toast.makeText(getApplicationContext(), "Runtime Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
                 }
-
                 return null;
             }
 
@@ -194,6 +203,17 @@ import android.widget.Toast;
                 // dismiss the dialog after getting all games
                 pDialog.dismiss();
                 // updating UI from Background Thread
+                if (file_url != null) {
+                    if (file_url.equals("1")) {
+                        Toast.makeText(getApplicationContext(), "No games found. Try creating a new game", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Error. Try logging in again.", Toast.LENGTH_LONG).show();
+                        Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                        // Closing all previous activities
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+                    }
+                }
                 runOnUiThread(new Runnable() {
                     public void run() {
                         /**
@@ -210,6 +230,5 @@ import android.widget.Toast;
                 });
 
             }
-
         }
     }
