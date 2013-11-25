@@ -87,7 +87,8 @@ import android.widget.Toast;
         }
         
         public void onClick_Add(View v) {
-            //TODO: implement add game
+            Intent intent = new Intent(getApplicationContext(), NewGameActivity.class);
+            startActivity(intent);
         }
 
         public void onClick_Refresh(View v) {
