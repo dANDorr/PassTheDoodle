@@ -18,6 +18,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 public class NewGameActivity extends Activity {
 
@@ -26,8 +28,14 @@ public class NewGameActivity extends Activity {
 
 	JSONParser jsonParser = new JSONParser();
 	EditText inputName;
-	EditText inputRounds;
+	SeekBar inputRounds;
 	EditText inputDesc;
+	TextView roundsLabel;
+	
+	// Since SeekBar has no min. value attribute (it always starts at 0)
+	// we add MIN_ROUNDS to every call to SeekBar's value.
+	// Max is 17 + 3 = 20
+	final int MIN_ROUNDS = 3;
 
 	// url to create new game
 	private static String url_create_game = "http://passthedoodle.com/test/create_game.php";
@@ -42,9 +50,14 @@ public class NewGameActivity extends Activity {
 
 		// Edit Text
 		inputName = (EditText) findViewById(R.id.inputName);
-		inputRounds = (EditText) findViewById(R.id.inputRounds);
 		inputDesc = (EditText) findViewById(R.id.inputDesc);
 
+		// Rounds TextView that updates as you move slider
+		roundsLabel = (TextView) findViewById(R.id.asdf);
+		roundsLabel.setText("Rounds\t" + MIN_ROUNDS);
+		inputRounds = (SeekBar) findViewById(R.id.inputRounds);		
+		inputRounds.setOnSeekBarChangeListener(new roundsListener());
+		
 		// Create button
 		Button btnCreateGame = (Button) findViewById(R.id.btnCreateGame);
 
@@ -82,7 +95,8 @@ public class NewGameActivity extends Activity {
 		 * */
 		protected String doInBackground(String... args) {
 			String name = inputName.getText().toString();
-			String rounds = inputRounds.getText().toString();
+			int roundsInt = inputRounds.getProgress() + MIN_ROUNDS;
+			String rounds = "" + roundsInt;
 			String description = inputDesc.getText().toString();
 
 			// Building Parameters
@@ -131,6 +145,21 @@ public class NewGameActivity extends Activity {
 			// dismiss the dialog once done
 			pDialog.dismiss();
 		}
-
 	}
+
+	private class roundsListener implements SeekBar.OnSeekBarChangeListener {
+
+        public void onProgressChanged(SeekBar seekBar, int progress,
+                boolean fromUser) {
+        	int rounds = progress + MIN_ROUNDS;
+                            // Log the progress
+            Log.d("DEBUG", "Progress is: " + rounds);
+                            //set textView's text
+            roundsLabel.setText("Rounds\t" + rounds);
+        }
+
+        public void onStartTrackingTouch(SeekBar seekBar) {}
+
+        public void onStopTrackingTouch(SeekBar seekBar) {}
+    }
 }

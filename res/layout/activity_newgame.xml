@@ -29,23 +29,25 @@
 	    android:singleLine="true"/>
 	
 	<!-- Rounds Label -->
-    <TextView android:layout_width="fill_parent"
+    <TextView
+		android:id="@+id/asdf"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Rounds"
         android:paddingLeft="10dip"
         android:paddingRight="10dip"
         android:paddingTop="10dip"
-        android:textSize="17dip"/>
+        android:textSize="17dip" />
     
     <!-- Input Rounds -->
-	<EditText android:id="@+id/inputRounds" 
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_margin="5dip"
+
+    <SeekBar
+        android:id="@+id/inputRounds"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dip"
 	    android:layout_marginBottom="15dip"
-	    android:singleLine="true"
-	    android:inputType="number"
-	    android:maxLength="20"/>
+	    android:max="17" />
 	
 	<!-- Description Label -->
     <TextView android:layout_width="fill_parent"
