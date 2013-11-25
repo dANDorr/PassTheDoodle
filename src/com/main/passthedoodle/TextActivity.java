@@ -238,8 +238,10 @@ public class TextActivity extends Activity {
             if (headerCode == 202) { //Authorized
             	// TODO: Alter this to send user to the game menu
                 Toast.makeText(getApplicationContext(), "Description submitted!", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("Tab", 2);
                 startActivity(intent);
+                finish();
             } else if (headerCode == 401) { //Unauthorized
                 Toast.makeText(getApplicationContext(), "Incorrect username/password!", Toast.LENGTH_LONG).show();
             } else if (headerCode >= 500 && headerCode <= 600) { //Server problem (better fix it!)

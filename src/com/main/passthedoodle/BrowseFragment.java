@@ -10,14 +10,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListAdapter;
@@ -26,7 +31,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-    public class GameActivity extends ListActivity {
+    public class BrowseFragment extends ListFragment {
 
         // Progress Dialog
         private ProgressDialog pDialog;
@@ -50,13 +55,36 @@ import android.widget.Toast;
         JSONArray games = null;
 
         @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_game);
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    		View rootView = inflater.inflate(R.layout.fragment_browse, container, false);
+    		
+    		rootView.findViewById(R.id.btnAdd)
+			            .setOnClickListener(new View.OnClickListener() {
+			                @Override
+			                public void onClick(View view) {
+			                	Intent intent = new Intent(getActivity(), NewGameActivity.class);
+			                	startActivity(intent);
+			                }
+			            });
+    		
+    		rootView.findViewById(R.id.btnClear)
+			            .setOnClickListener(new View.OnClickListener() {
+			                @Override
+			                public void onClick(View view) {
+			                	//TODO: implement refresh games
+			                }
+			            });
+    		
+    		return rootView;
+    	}
+        
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState)   {
+        	super.onActivityCreated(savedInstanceState);
             
             // Hashmap for ListView
             gamesList = new ArrayList<HashMap<String, String>>();
-
+            
             // Loading games in Background Thread
             new LoadAllGames().execute();
 
@@ -75,8 +103,8 @@ import android.widget.Toast;
                             .toString();
 
                     // Starting new intent
-                    Intent in = new Intent(getApplicationContext(),
-                            GameActivity.class); ///EditGameActivity.class
+                    Intent in = new Intent(getActivity(),
+                            BrowseFragment.class); ///EditGameActivity.class
                     // sending id to next activity
                     in.putExtra(TAG_ID, id);
                     
@@ -85,27 +113,18 @@ import android.widget.Toast;
                 }
             });
         }
-        
-        public void onClick_Add(View v) {
-            Intent intent = new Intent(getApplicationContext(), NewGameActivity.class);
-            startActivity(intent);
-        }
-
-        public void onClick_Refresh(View v) {
-            //TODO: implement refresh games
-        }
 
         // Response from Edit Game Activity
         @Override
-        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
             // if result code 100
             if (resultCode == 100) { 
                 // if result code 100 is received 
                 // means user edited/deleted game
                 // reload this screen again
-                Intent intent = getIntent();
-                finish();
+                Intent intent = getActivity().getIntent();
+                getActivity().finish();
                 startActivity(intent);
             }
         }
@@ -121,7 +140,7 @@ import android.widget.Toast;
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                pDialog = new ProgressDialog(GameActivity.this);
+                pDialog = new ProgressDialog(getActivity());
                 pDialog.setMessage("Loading games. Please wait...");
                 pDialog.setIndeterminate(false);
                 pDialog.setCancelable(false);
@@ -134,7 +153,7 @@ import android.widget.Toast;
             protected String doInBackground(String... args) {
                 // Building Parameters
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
-                SharedPreferences pref = getApplicationContext().getSharedPreferences("ptd", 0);
+                SharedPreferences pref = getActivity().getSharedPreferences("ptd", 0);
                 String session = pref.getString("session", "0");
                 params.add(new BasicNameValuePair("PHPSESSID", session));
                 // getting JSON string from URL
@@ -184,15 +203,15 @@ import android.widget.Toast;
                 } catch (JSONException e) {
                     e.printStackTrace();
                     System.out.print("JSON Exception occurred");
-                    Toast.makeText(getApplicationContext(), "JSON Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "JSON Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
                 } catch (NullPointerException n) {
                     n.printStackTrace();
                     System.out.print("Null Pointer Exception occurred");
-                    Toast.makeText(getApplicationContext(), "Null Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Null Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
                 } catch (RuntimeException r) {
                     r.printStackTrace();
                     System.out.print("Runtime Exception occurred");
-                    Toast.makeText(getApplicationContext(), "Runtime Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Runtime Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
                 }
                 return null;
             }
@@ -206,22 +225,22 @@ import android.widget.Toast;
                 // updating UI from Background Thread
                 if (file_url != null) {
                     if (file_url.equals("1")) {
-                        Toast.makeText(getApplicationContext(), "No games found. Try creating a new game", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "No games found. Try creating a new game", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Error. Try logging in again.", Toast.LENGTH_LONG).show();
-                        Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                        Toast.makeText(getActivity(), "Error. Try logging in again.", Toast.LENGTH_LONG).show();
+                        Intent i = new Intent(getActivity(), LoginActivity.class);
                         // Closing all previous activities
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(i);
                     }
                 }
-                runOnUiThread(new Runnable() {
+                getActivity().runOnUiThread(new Runnable() {
                     public void run() {
                         /**
                          * Updating parsed JSON data into ListView
                          * */
                         ListAdapter adapter = new SimpleAdapter(
-                                GameActivity.this, gamesList,
+                        		getActivity(), gamesList,
                                 R.layout.item_layout, new String[] { TAG_ID,
                                         TAG_CURSEQ},
                                 new int[] { R.id.id, R.id.play });

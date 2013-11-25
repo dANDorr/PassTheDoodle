@@ -108,7 +108,8 @@ public class NewGameActivity extends Activity {
 
 				if (success == 1) {
 					// successfully created game
-					Intent i = new Intent(getApplicationContext(), GameActivity.class);
+					Intent i = new Intent(getApplicationContext(), MainActivity.class);
+					i.putExtra("Tab", 2);
 					startActivity(i);
 					
 					// closing this screen

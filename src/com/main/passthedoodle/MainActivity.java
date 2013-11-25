@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity {
     
@@ -25,7 +24,13 @@ public class MainActivity extends FragmentActivity {
         mMainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.main_pager);
         mViewPager.setAdapter(mMainPagerAdapter);
-        mViewPager.setCurrentItem(1); // start in the center tab
+        
+        // The default value 1 is the Home tab. Goes to games list if passed 2
+        int tabInt = getIntent().getIntExtra("Tab", 1);
+        mViewPager.setCurrentItem(tabInt);
+        
+        // so that games list doesn't refresh every time you swipe away and swipe back to it
+        mViewPager.setOffscreenPageLimit(2);
     }
     
     @Override
@@ -134,25 +139,11 @@ public class MainActivity extends FragmentActivity {
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Intent intent = new Intent(getActivity(), GameActivity.class);
+                                Intent intent = new Intent(getActivity(), NewGameActivity.class);
                                 startActivity(intent);
                             }
                         });
 			return rootView;
     	}
     }
-    
-    public static class BrowseFragment extends Fragment {
-    	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    		View rootView = inflater.inflate(R.layout.fragment_browse, container, false);
-    		((TextView) rootView.findViewById(R.id.textview_placeholder)).setText("COOL SHIET HERE");
-    		return rootView;
-    	}
-    }
-    
-    public void goGame(View view) {
-        Intent intent = new Intent(this, GameActivity.class);
-        startActivity(intent);
-    }
-
 }
