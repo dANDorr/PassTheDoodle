@@ -48,7 +48,9 @@ import android.widget.Toast;
         private static final String TAG_SUCCESS = "success";
         private static final String TAG_GAMES = "games";
         private static final String TAG_ID = "id";
-        private static final String TAG_CREATOR = "creator_id";
+        private static final String TAG_CREATORID = "creator_id";
+        private static final String TAG_CREATOR = "creator";
+        private static final String TAG_LASTPLAYER = "lastplayer";
         private static final String TAG_CURSEQ = "cur_sequence";
 
         // games JSONArray
@@ -100,16 +102,30 @@ import android.widget.Toast;
                         int position, long idd) {
                     // getting values from selected ListItem
                     String id = ((TextView) view.findViewById(R.id.id)).getText()
-                            .toString();
+                            .toString().substring(5);
 
                     // Starting new intent
-                    Intent in = new Intent(getActivity(),
-                            BrowseFragment.class); ///EditGameActivity.class
-                    // sending id to next activity
-                    in.putExtra(TAG_ID, id);
+                    Intent in;
+                    try {
+                        if (Integer.parseInt(games.getJSONObject(Integer.parseInt(id)).getString(TAG_CURSEQ)) % 2 == 0) {
+                            in= new Intent(getActivity(), DrawingActivity.class); ///EditGameActivity.class
+                        } else {
+                            in= new Intent(getActivity(), TextActivity.class); ///EditGameActivity.class
+                        }
+                        // sending id to next activity
+                        in.putExtra(TAG_ID, id);
+                        //getActivity().finish();
+                        startActivity(in);
+                    } catch (NumberFormatException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                     
                     // starting new activity and expecting some response back
-                    startActivityForResult(in, 100);
+                    //startActivityForResult(in, 100);
                 }
             });
         }
@@ -176,12 +192,14 @@ import android.widget.Toast;
 
                             // Storing each json item in variable
                             String id = "Game " + c.getString(TAG_ID);
+                            String creator_id = c.getString(TAG_CREATORID);
                             String creator = c.getString(TAG_CREATOR);
+                            String lastplayer = c.getString(TAG_LASTPLAYER);
                             String curSequence;
                             if (Integer.parseInt(c.getString(TAG_CURSEQ)) % 2 == 0) {
-                                curSequence = "Draw it!!";
+                                curSequence = "DRAW IT!!";
                             } else {
-                                curSequence = "Describe it!!";
+                                curSequence = "DESCRIBE IT!!";
                             }
 
                             // creating new HashMap
@@ -189,14 +207,16 @@ import android.widget.Toast;
 
                             // adding each child node to HashMap key => value
                             map.put(TAG_ID, id);
-                            map.put(TAG_CREATOR, creator);
+                            map.put(TAG_CREATORID, "creator id: " + creator_id);
+                            map.put(TAG_CREATOR, "creator: " + creator);
+                            map.put(TAG_LASTPLAYER, "last player: " + lastplayer);
                             map.put(TAG_CURSEQ, curSequence);
 
                             // adding HashList to ArrayList
                             gamesList.add(map);
                         }
                     } else if (success == 0) {
-                        return "1";
+                        return "0";
                     } else if (success == 2) {
                         return "2";
                     }
@@ -224,7 +244,7 @@ import android.widget.Toast;
                 pDialog.dismiss();
                 // updating UI from Background Thread
                 if (file_url != null) {
-                    if (file_url.equals("1")) {
+                    if (file_url.equals("0")) {
                         Toast.makeText(getActivity(), "No games found. Try creating a new game", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getActivity(), "Error. Try logging in again.", Toast.LENGTH_LONG).show();
@@ -242,8 +262,8 @@ import android.widget.Toast;
                         ListAdapter adapter = new SimpleAdapter(
                         		getActivity(), gamesList,
                                 R.layout.item_layout, new String[] { TAG_ID,
-                                        TAG_CURSEQ},
-                                new int[] { R.id.id, R.id.play });
+                                        TAG_CURSEQ, TAG_CREATORID, TAG_CREATOR, TAG_LASTPLAYER},
+                                new int[] { R.id.id, R.id.play, R.id.creatorid, R.id.creator, R.id.lastplayer });
                         // updating listview
                         setListAdapter(adapter);
                     }

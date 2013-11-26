@@ -13,11 +13,33 @@
         android:textSize="24dip"
         android:textStyle="bold" />
     <TextView
+        android:id="@+id/creatorid"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="3dip"
+        android:paddingLeft="6dip"
+        android:textSize="18dip" />
+    <TextView
+        android:id="@+id/creator"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="3dip"
+        android:paddingLeft="36dip"
+        android:textSize="18dip" />
+    <TextView
+        android:id="@+id/lastplayer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="3dip"
+        android:paddingLeft="36dip"
+        android:textSize="18dip" />
+    <TextView
         android:id="@+id/play"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="6dip"
+        android:paddingTop="3dip"
         android:paddingLeft="6dip"
-        android:textSize="18dip" />
+        android:textSize="18dip"
+        android:textStyle="bold" />
 
 </LinearLayout>
