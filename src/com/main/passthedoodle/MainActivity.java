@@ -26,11 +26,11 @@ public class MainActivity extends FragmentActivity {
         mViewPager.setAdapter(mMainPagerAdapter);
         
         // The default value 1 is the Home tab. Goes to games list if passed 2
-        int tabInt = getIntent().getIntExtra("Tab", 1);
+        int tabInt = getIntent().getIntExtra("Tab", getResources().getInteger(R.integer.home_tab));
         mViewPager.setCurrentItem(tabInt);
         
         // so that games list doesn't refresh every time you swipe away and swipe back to it
-        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.setOffscreenPageLimit(3);
     }
     
     @Override
@@ -48,27 +48,31 @@ public class MainActivity extends FragmentActivity {
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    return new CreateFragment();
+                    return new NewGameFragment();
                 case 1:
                 	return new HomeFragment();
                 case 2:
                 	return new BrowseFragment();
+                case 3:
+                	return new TempFragment();
                 default:
-                    return new CreateFragment();
+                    return new TempFragment();
             }
         }
         @Override
-        public int getCount() {
-            return 3;
+        public int getCount() { // the number of tabs
+            return 4;
         }
         @Override
         public CharSequence getPageTitle(int position) {
-        	if (position == 0)
+        	if (position == getResources().getInteger(R.integer.create_tab))
         		return "Create";
-        	else if (position == 1)
+        	else if (position == getResources().getInteger(R.integer.home_tab))
         		return "Home";
-        	else if (position == 2)
+        	else if (position == getResources().getInteger(R.integer.browse_tab))
         		return "Browse";
+        	else if (position == 3)
+        		return "Temp";
         	else
         		return "gtfo";
         }
@@ -106,9 +110,9 @@ public class MainActivity extends FragmentActivity {
     	}
     }
     
-    public static class CreateFragment extends Fragment {
+    public static class TempFragment extends Fragment {
     	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    		View rootView = inflater.inflate(R.layout.fragment_create, container, false);
+    		View rootView = inflater.inflate(R.layout.fragment_temp, container, false);
     		
     		rootView.findViewById(R.id.button_paint)
 						.setOnClickListener(new View.OnClickListener() {
@@ -135,14 +139,7 @@ public class MainActivity extends FragmentActivity {
 				                startActivity(intent);
 				            }
 						});
-			rootView.findViewById(R.id.button_game)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new Intent(getActivity(), NewGameActivity.class);
-                                startActivity(intent);
-                            }
-                        });
+
 			return rootView;
     	}
     }

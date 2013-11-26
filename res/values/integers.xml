@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <integer name="create_tab">0</integer>
+    <integer name="home_tab">1</integer>
+    <integer name="browse_tab">2</integer>
+    
+</resources>

@@ -18,6 +18,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,8 +65,8 @@ import android.widget.Toast;
 			            .setOnClickListener(new View.OnClickListener() {
 			                @Override
 			                public void onClick(View view) {
-			                	Intent intent = new Intent(getActivity(), NewGameActivity.class);
-			                	startActivity(intent);
+			                	ViewPager vp = (ViewPager) getActivity().findViewById(R.id.main_pager);
+								vp.setCurrentItem(getResources().getInteger(R.integer.create_tab));
 			                }
 			            });
     		
