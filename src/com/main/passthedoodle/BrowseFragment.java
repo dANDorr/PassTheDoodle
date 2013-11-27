@@ -248,7 +248,7 @@ import android.widget.Toast;
                     if (file_url.equals("0")) {
                         Toast.makeText(getActivity(), "No games found. Try creating a new game", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getActivity(), "Error. Try logging in again.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "Log in or register please.", Toast.LENGTH_LONG).show();
                         Intent i = new Intent(getActivity(), LoginActivity.class);
                         // Closing all previous activities
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

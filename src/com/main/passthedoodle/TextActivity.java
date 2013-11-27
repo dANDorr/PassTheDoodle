@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -18,6 +20,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import com.main.passthedoodle.LoginActivity.UserLoginTask;
 
@@ -61,8 +64,9 @@ public class TextActivity extends Activity {
 		// false is default (launched from main menu)
 		if (getIntent().getBooleanExtra("isLocal", false) == true)
 			new LocalDrawingTask().execute("dummy");
-		else
-			new DownloadDrawingTask().execute(getImageURL());
+		else {
+		    new DownloadDrawingTask().execute(getImageURL());
+		}
 	}
 	
 	@Override
@@ -77,6 +81,18 @@ public class TextActivity extends Activity {
 	}
 	
 	private String getImageURL() {
+	    try {
+            return "http://passthedoodle.com/i/" + new GetImage().execute().get();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+            
 		return "http://i.imgur.com/t2APljR.gif";
 	}
 
@@ -182,6 +198,34 @@ public class TextActivity extends Activity {
 		
 
 		
+	}
+	
+	public class GetImage extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... arg0) {
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            String game_id = getIntent().getStringExtra("game_id");
+            int responseCode = 0;
+            params.add(new BasicNameValuePair("game_id", game_id));
+            String filename = "";
+            try {
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpPost httppost = new HttpPost("http://passthedoodle.com/test/get_i.php");
+                httppost.setEntity(new UrlEncodedFormEntity(params));
+                HttpResponse response = httpclient.execute(httppost);
+                
+                //output = response.getEntity().getContent().toString();
+                Scanner sc = new Scanner(response.getEntity().getContent());
+                filename = sc.next();
+                
+                responseCode = response.getStatusLine().getStatusCode();
+                Log.d("GET RESPONSE", filename + " -- statuscode: " + responseCode);
+
+            } catch (Exception e) {
+                Log.e("log_tag", "Error in http connection -- " + e.toString());
+            }
+            return filename;
+        }
 	}
 	
     public class SubmitTextTask extends AsyncTask<String, Void, Integer> {

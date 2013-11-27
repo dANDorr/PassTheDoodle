@@ -50,7 +50,7 @@ public class RegisterActivity extends Activity {
 	
 	//UI References
 	private EditText newNameView, newPasswordView, newConfirmPasswordView;
-	private CheckBox logMeInView = (CheckBox) findViewById(R.id.logmein_checkbox);
+	private CheckBox logMeInView;
 	private View registerStatusView, registerFormView;
 	private TextView registerStatusMessageView;
 	
@@ -64,6 +64,7 @@ public class RegisterActivity extends Activity {
         newNameView = (EditText) findViewById(R.id.new_user);
         newPasswordView = (EditText) findViewById(R.id.new_password);
         newConfirmPasswordView = (EditText) findViewById(R.id.new_confirm_password);
+        logMeInView = (CheckBox) findViewById(R.id.logmein_checkbox);
         newConfirmPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id,
