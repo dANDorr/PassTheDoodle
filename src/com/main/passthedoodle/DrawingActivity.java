@@ -2,7 +2,10 @@ package com.main.passthedoodle;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -88,9 +91,32 @@ public class DrawingActivity extends Activity implements OnClickListener {
         saveBtn = (ImageButton)findViewById(R.id.prompt_btn);
         saveBtn.setOnClickListener(this);
         
-      //save button
+        //save button
         saveBtn = (ImageButton)findViewById(R.id.submit_btn);
         saveBtn.setOnClickListener(this);
+        
+        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+        newDialog.setTitle("Prompt");
+
+        // Load promp from database
+        String promptString ="";
+        try {
+            promptString = new GetPrompt().execute().get();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        newDialog.setMessage(promptString);
+        
+        newDialog.setNeutralButton("OK", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                dialog.dismiss();
+            }
+        });
+        newDialog.show();
 	}
 
 	@Override
@@ -353,6 +379,33 @@ public class DrawingActivity extends Activity implements OnClickListener {
             newDialog.show();
         }
 	}
+	
+	public class GetPrompt extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... arg0) {
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            String game_id = getIntent().getStringExtra("game_id");
+            int responseCode = 0;
+            params.add(new BasicNameValuePair("game_id", game_id));
+            String prompt = "";
+            try {
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpPost httppost = new HttpPost("http://passthedoodle.com/test/get_desc.php");
+                httppost.setEntity(new UrlEncodedFormEntity(params));
+                HttpResponse response = httpclient.execute(httppost);
+                
+                Scanner sc = new Scanner(response.getEntity().getContent());
+                prompt = sc.next();
+                
+                responseCode = response.getStatusLine().getStatusCode();
+                Log.d("GET RESPONSE", prompt + " -- statuscode: " + responseCode);
+
+            } catch (Exception e) {
+                Log.e("log_tag", "Error in http connection -- " + e.toString());
+            }
+            return prompt;
+        }
+    }
 
 	public class SubmitDrawingTask extends AsyncTask<String, Void, Integer> {
 	    @Override
@@ -369,6 +422,8 @@ public class DrawingActivity extends Activity implements OnClickListener {
 
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
             nameValuePairs.add(new BasicNameValuePair("PHPSESSID", session));
+            String gameid = getIntent().getStringExtra("id");
+            nameValuePairs.add(new BasicNameValuePair("game_id", gameid));
             nameValuePairs.add(new BasicNameValuePair("Image", byteArrayEnc));
 
             try {

@@ -195,9 +195,6 @@ public class TextActivity extends Activity {
 		    mTextTask = new SubmitTextTask();
 		    mTextTask.execute(submitText.getText().toString());
 		}
-		
-
-		
 	}
 	
 	public class GetImage extends AsyncTask<String, Void, String> {
@@ -214,7 +211,6 @@ public class TextActivity extends Activity {
                 httppost.setEntity(new UrlEncodedFormEntity(params));
                 HttpResponse response = httpclient.execute(httppost);
                 
-                //output = response.getEntity().getContent().toString();
                 Scanner sc = new Scanner(response.getEntity().getContent());
                 filename = sc.next();
                 
@@ -237,13 +233,12 @@ public class TextActivity extends Activity {
         	
         	HttpClient httpClient = new DefaultHttpClient();
         	HttpPost httpPost = new HttpPost("http://passthedoodle.com/test/mtext.php");
-			BasicNameValuePair descriptionBasicNameValuePair = new BasicNameValuePair("description", arg0[0]);
-			BasicNameValuePair sessionBasicNameValuePAir = new BasicNameValuePair("PHPSESSID", session);
+			String gameid = getIntent().getStringExtra("id");
 			
 			List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
-			nameValuePairList.add(descriptionBasicNameValuePair);
-			nameValuePairList.add(sessionBasicNameValuePAir);
-			
+			nameValuePairList.add(new BasicNameValuePair("description", arg0[0]));
+			nameValuePairList.add(new BasicNameValuePair("PHPSESSID", session));
+			nameValuePairList.add(new BasicNameValuePair("game_id", gameid));
 			int responseCode = 0;
 			
             try {
