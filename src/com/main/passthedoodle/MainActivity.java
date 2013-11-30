@@ -136,9 +136,18 @@ public class MainActivity extends FragmentActivity {
 				    		public void onClick(View view) {
 				                Intent intent = new Intent(getActivity(), DrawingActivity.class);
 				                intent.putExtra("isLocal", true);
+				                intent.putExtra("isInitialRound", true);
 				                startActivity(intent);
 				            }
-						});
+						});			
+			rootView.findViewById(R.id.button_comp)
+			.setOnClickListener(new View.OnClickListener() {
+				@Override
+	    		public void onClick(View view) {
+	                Intent intent = new Intent(getActivity(), ViewCompletedActivity.class);
+	                startActivity(intent);
+	            }
+			});
 
 			return rootView;
     	}

@@ -48,6 +48,8 @@ public class DrawingActivity extends Activity implements OnClickListener {
 	byte[] byteArray;
 	private SubmitDrawingTask mDrawingTask = null;
 	
+	private boolean isLocal;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -97,26 +99,8 @@ public class DrawingActivity extends Activity implements OnClickListener {
         
         AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
         newDialog.setTitle("Prompt");
-
-        // Load promp from database
-        String promptString ="";
-        try {
-            promptString = new GetPrompt().execute().get();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        newDialog.setMessage(promptString);
         
-        newDialog.setNeutralButton("OK", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
-                dialog.dismiss();
-            }
-        });
-        newDialog.show();
+        isLocal = getIntent().getBooleanExtra("isLocal", false);
 	}
 
 	@Override
@@ -317,19 +301,32 @@ public class DrawingActivity extends Activity implements OnClickListener {
             AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
             newDialog.setTitle("Prompt");
 
-            // Local play
+            String promptString ="";
             Intent intent = getIntent();
-            String promptString = intent.getStringExtra("Text");
-            if (promptString != null) {
-            	// prompt received text from TextActivity
-            	newDialog.setMessage(promptString);
+            promptString = intent.getStringExtra("Text");
+            if (promptString != null && isLocal) {
+            	// Prompt received text from TextActivity local play              	
+                //newDialog.setMessage(promptString);
             }
-            else {
-            	// Starting new local game, generate word for prompt.
+            else if (!isLocal) {
+            	// Not local so load promp from database
+                try {
+                	promptString = new GetPrompt().execute().get();
+                } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                } catch (ExecutionException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }
+            }
+
+            if (getIntent().getBooleanExtra("isInitialRound", false)){
+            	// Starting new game, generate word for prompt.
             	// Pass in .txt filename for the appropriate difficulty level.
             	promptString = new WordGenerator(this, "hard.txt").getWord();
-            	newDialog.setMessage(promptString);            	
             }
+            newDialog.setMessage(promptString);
             
             newDialog.setNeutralButton("OK", new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog, int which){
@@ -358,7 +355,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
                     passBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     byteArray = stream.toByteArray();
 
-                    if (getIntent().getBooleanExtra("isLocal", false)) {
+                    if (isLocal) {
                     	// tells TextActivity which image loading method to use
                         intent.putExtra("isLocal", true);
                         intent.putExtra("Image", byteArray);

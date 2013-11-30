@@ -26,6 +26,17 @@
         android:layout_alignParentTop="true"
         android:onClick="goWrite"
         android:text="Let&apos;s Guess!" />
+    
+    <Button
+        android:id="@+id/button_comp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button_local_play"
+        android:layout_alignBottom="@+id/button_local_play"
+        android:layout_alignLeft="@+id/button_guess"
+        android:layout_alignParentRight="true"
+        android:onClick="goComp"
+        android:text="View Completed" />
 
     <Button
         android:id="@+id/button_local_play"

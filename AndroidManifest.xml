@@ -73,7 +73,7 @@
                 android:value="com.main.passthedoodle.MainActivity" />
         </activity>
         <activity
-            android:name="com.main.passthedoodle.GameActivity"
+            android:name="com.main.passthedoodle.ViewCompletedActivity"
             android:label="@string/title_activity_game"
             android:parentActivityName="com.main.passthedoodle.MainActivity"
             android:screenOrientation="portrait"
@@ -85,7 +85,7 @@
                 android:value="com.main.passthedoodle.MainActivity" />
         </activity>
         <activity
-            android:name="com.main.passthedoodle.NewGameActivity"
+            android:name="com.main.passthedoodle.NewGameFragment"
             android:label="@string/title_activity_game"
             android:parentActivityName="com.main.passthedoodle.MainActivity"
             android:screenOrientation="portrait"
