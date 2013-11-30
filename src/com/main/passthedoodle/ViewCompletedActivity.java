@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -109,7 +108,8 @@ public class ViewCompletedActivity extends FragmentActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return (position*2 + 1) + " \u2192 " + (position*2 + 2);
+        	int i = position % stringsList.size();
+            return (i*2 + 1) + " \u2192 " + (i*2 + 2);
         }
     }
 

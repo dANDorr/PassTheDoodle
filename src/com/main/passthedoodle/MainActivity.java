@@ -141,13 +141,13 @@ public class MainActivity extends FragmentActivity {
 				            }
 						});			
 			rootView.findViewById(R.id.button_comp)
-			.setOnClickListener(new View.OnClickListener() {
-				@Override
-	    		public void onClick(View view) {
-	                Intent intent = new Intent(getActivity(), ViewCompletedActivity.class);
-	                startActivity(intent);
-	            }
-			});
+						.setOnClickListener(new View.OnClickListener() {
+							@Override
+				    		public void onClick(View view) {
+				                Intent intent = new Intent(getActivity(), ViewCompletedActivity.class);
+				                startActivity(intent);
+				            }
+						});
 
 			return rootView;
     	}
