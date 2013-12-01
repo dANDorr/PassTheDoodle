@@ -90,14 +90,6 @@ public class MainActivity extends FragmentActivity {
 				                startActivity(intent);
 				            }
             			});
-    		rootView.findViewById(R.id.button_register)
-						.setOnClickListener(new View.OnClickListener() {
-							@Override
-				    		public void onClick(View view) {
-				                Intent intent = new Intent(getActivity(), RegisterActivity.class);
-				                startActivity(intent);
-				            }
-						});
     		rootView.findViewById(R.id.button_guest)
 						.setOnClickListener(new View.OnClickListener() {
 							@Override

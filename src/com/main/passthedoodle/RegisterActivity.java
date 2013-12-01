@@ -46,10 +46,10 @@ public class RegisterActivity extends Activity {
 	private UserLoginTask login = null;
 	
 	//Values for user name, password, and confirmation of password for registration attempt
-	private String userName, password, confirmPassword, logMeIn;
+	private String userName, password, confirmPassword, email, logMeIn;
 	
 	//UI References
-	private EditText newNameView, newPasswordView, newConfirmPasswordView;
+	private EditText newNameView, newPasswordView, newConfirmPasswordView, newEmailView;
 	private CheckBox logMeInView;
 	private View registerStatusView, registerFormView;
 	private TextView registerStatusMessageView;
@@ -64,8 +64,9 @@ public class RegisterActivity extends Activity {
         newNameView = (EditText) findViewById(R.id.new_user);
         newPasswordView = (EditText) findViewById(R.id.new_password);
         newConfirmPasswordView = (EditText) findViewById(R.id.new_confirm_password);
+        newEmailView = (EditText) findViewById(R.id.new_email);
         logMeInView = (CheckBox) findViewById(R.id.logmein_checkbox);
-        newConfirmPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        newEmailView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id,
                     KeyEvent keyEvent) {
@@ -110,11 +111,13 @@ public class RegisterActivity extends Activity {
 		newNameView.setError(null);
 		newPasswordView.setError(null);
 		newConfirmPasswordView.setError(null);
+		newEmailView.setError(null);
 		
 		//Store values at time of registration attempt
 		userName = newNameView.getText().toString();
 		password = newPasswordView.getText().toString();
 		confirmPassword = newConfirmPasswordView.getText().toString();
+		email = newEmailView.getText().toString();
 		logMeIn = "" + logMeInView.isChecked();
 		
 		int minimumLength = 0; //minimum length for password
@@ -160,7 +163,7 @@ public class RegisterActivity extends Activity {
         	registerStatusMessageView.setText(R.string.register_progress_registering);
         	showProgress(true);
         	mAuthTask = new UserRegisterTask();
-            mAuthTask.execute(userName, password, logMeIn);
+        	mAuthTask.execute(userName, password, email, logMeIn);
         }
 	}
 	
@@ -218,10 +221,12 @@ public class RegisterActivity extends Activity {
 			
 			BasicNameValuePair usernameBasicNameValuePair = new BasicNameValuePair("username", arg0[0]);
 			BasicNameValuePair passwordBasicNameValuePair = new BasicNameValuePair("password", arg0[1]);
+			BasicNameValuePair emailBasicNameValuePair = new BasicNameValuePair("email", arg0[2]);
 			
 			List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
 			nameValuePairList.add(usernameBasicNameValuePair);
 			nameValuePairList.add(passwordBasicNameValuePair);
+			nameValuePairList.add(emailBasicNameValuePair);
 			
 			int responseCode = 0;
 			
@@ -247,7 +252,7 @@ public class RegisterActivity extends Activity {
             
             Log.d("Register", "statusCode: " + responseCode);
             
-            if (arg0[2].equals("true")) {
+            if (arg0[3].equals("true")) {
                 login = new UserLoginTask();
                 login.execute(arg0[0], arg0[1]);
             }
@@ -261,7 +266,7 @@ public class RegisterActivity extends Activity {
             
             // We could probably be more specific here about what we tell the user
             //but this should be okay for now
-            if (headerCode == 202) { //Account created
+            if (headerCode == 201) { //Account created
             	// TODO: Alter this to send user to the login menu
                 Toast.makeText(getApplicationContext(), "Registered", Toast.LENGTH_LONG).show();
                 //Intent intent = new Intent(getApplicationContext(), GameActivity.class);

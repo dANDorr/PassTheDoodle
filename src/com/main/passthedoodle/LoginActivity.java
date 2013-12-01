@@ -97,6 +97,15 @@ public class LoginActivity extends Activity {
                         attemptLogin();
                     }
                 });
+        
+        findViewById(R.id.register_button).setOnClickListener(
+        		new View.OnClickListener(){
+        			@Override
+		    		public void onClick(View view) {
+		                Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+		                startActivity(intent);
+        			}
+        		});
     }
 
     @Override
