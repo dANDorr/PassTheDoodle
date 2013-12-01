@@ -286,6 +286,10 @@ public class LoginActivity extends Activity {
                 finish();
             } else if (headerCode == 401) { //Unauthorized
                 Toast.makeText(getApplicationContext(), "Incorrect username/password!", Toast.LENGTH_LONG).show();
+            } else if (headerCode == 403) { //Forbidden (banned)
+            	Toast.makeText(getApplicationContext(), "You're banned! :(", Toast.LENGTH_LONG).show();
+            } else if (headerCode == 404) { //Not found
+            	Toast.makeText(getApplicationContext(), "Unable connect to server. Check your Internet connection.", Toast.LENGTH_LONG).show();
             } else if (headerCode >= 500 && headerCode <= 600) { //Server problem (better fix it!)
                 Toast.makeText(getApplicationContext(), "Server error", Toast.LENGTH_LONG).show();            
             } else { //Some other code (likely broken)
