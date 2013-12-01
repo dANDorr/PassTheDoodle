@@ -30,8 +30,15 @@ public class ViewCompletedFragment extends Fragment {
 		spinningCircle = (ProgressBar) rootView.findViewById(R.id.loading_image_circle2);
 
 		args = getArguments();
-		top.setText("Doodled: " +  args.getString("Prompt"));
-		bottom.setText("Guessed: " +  args.getString("Description"));
+		if (!args.getString("Prompt").equals(""))
+			top.setText("Doodled: " +  args.getString("Prompt"));
+		else
+			top.setText("");		
+		// Description is empty if game ended on a drawing so bottom text is blank
+		if (!args.getString("Description").equals(""))
+			bottom.setText("Guessed: " +  args.getString("Description"));
+		else
+			bottom.setText("");
 		
 		// passed into displayImage method of ImageLoader so progress circle is displayed
 		SimpleImageLoadingListener sill = new SimpleImageLoadingListener() {

@@ -1,5 +1,6 @@
 package com.main.passthedoodle;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -22,7 +23,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import com.main.passthedoodle.LoginActivity.UserLoginTask;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
+import com.nostra13.universalimageloader.utils.StorageUtils;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -61,11 +68,66 @@ public class TextActivity extends Activity {
 		
 		promptTextView.setText(getPromptString());
 		
-		// false is default (launched from main menu)
-		if (getIntent().getBooleanExtra("isLocal", false) == true)
-			new LocalDrawingTask().execute("dummy");
+		LocalPlayHandler lph = LocalPlayHandler.getInstance();
+		
+		// Configure Android-Universal-Image-Loader which will handle image caching
+		// might move configuration into MainActivity
+        File cacheDir = StorageUtils.getCacheDirectory(this);
+        DisplayImageOptions dio = new DisplayImageOptions.Builder()
+									        .cacheInMemory(true)
+									        .cacheOnDisc(true)
+									        .build();
+        ImageLoaderConfiguration ilConfig = new ImageLoaderConfiguration.Builder(this)
+        										.defaultDisplayImageOptions(dio)
+        										.discCache(new UnlimitedDiscCache(cacheDir))
+        										.writeDebugLogs()
+        										.build();
+        ImageLoader imageLoader = ImageLoader.getInstance();
+        imageLoader.init(ilConfig);
+
+		// passed into displayImage method of ImageLoader so progress circle is displayed
+		SimpleImageLoadingListener sill = new SimpleImageLoadingListener() {
+			@Override
+			public void onLoadingStarted(String imageUri, View view) {
+				spinningCircle.setVisibility(View.VISIBLE);
+			}
+
+			@Override
+			public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+				String message = null;
+				switch (failReason.getType()) {
+					case IO_ERROR:
+						message = "Input/Output error";
+						break;
+					case DECODING_ERROR:
+						message = "Image can't be decoded";
+						break;
+					case NETWORK_DENIED:
+						message = "Downloads are denied";
+						break;
+					case OUT_OF_MEMORY:
+						message = "Out Of Memory error";
+						break;
+					case UNKNOWN:
+						message = "Unknown error";
+						break;
+				}
+				Toast.makeText(TextActivity.this, message, Toast.LENGTH_SHORT).show();
+
+				spinningCircle.setVisibility(View.GONE);
+			}
+
+			@Override
+			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+				spinningCircle.setVisibility(View.GONE);
+			}
+		};
+		
+		// which image source to use
+		if (getIntent().getBooleanExtra("isLocal", false))
+			imageLoader.displayImage(lph.currentImage, drawingImageView, sill);
 		else {
-		    new DownloadDrawingTask().execute(getImageURL());
+			imageLoader.displayImage(getImageURL(), drawingImageView, sill);
 		}
 	}
 	
@@ -95,99 +157,21 @@ public class TextActivity extends Activity {
             
 		return "http://i.imgur.com/t2APljR.gif";
 	}
-
-	private class DownloadDrawingTask extends AsyncTask<String, Void, Bitmap> {
-
-		protected void onPreExecute() {
-			// display spinning progress circle before image loads
-			spinningCircle.setVisibility(View.VISIBLE);
-            super.onPreExecute();
-		}
-        protected Bitmap doInBackground(String... urls) {
-        	// params comes from the execute() call: params[0] is the url.
-        	return downloadBitmap(urls[0]);
-        }
-        
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(Bitmap result) {
-        	// hide spinning progress circle once image is finished loading
-        	spinningCircle.setVisibility(View.GONE);
-            drawingImageView.setImageBitmap(result);
-       }
-    }
-	
-	private class LocalDrawingTask extends AsyncTask<String, Void, Bitmap> {
-
-		protected void onPreExecute() {
-			// display spinning progress circle before image loads
-			spinningCircle.setVisibility(View.VISIBLE);
-            super.onPreExecute();
-		}
-        protected Bitmap doInBackground(String... dummy) {
-        	// Local play - passed from DrawingActivity
-    		Bundle extras = getIntent().getExtras();
-    		byte[] byteArray = extras.getByteArray("Image");
-
-    		return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-        }
-        
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(Bitmap result) {
-        	// hide spinning progress circle once image is finished loading
-        	spinningCircle.setVisibility(View.GONE);
-            drawingImageView.setImageBitmap(result);
-       }
-    }
-	
-	private static Bitmap downloadBitmap(String url) {
-        final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
-        final HttpGet getRequest = new HttpGet(url);
-        
-        try {
-            HttpResponse response = client.execute(getRequest);
-            final int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != HttpStatus.SC_OK) {
-                Log.w("DownloadDrawing", "Error " + statusCode
-                        + " while retrieving bitmap from " + url);
-                return null;
-            }
- 
-            final HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                InputStream inputStream = null;
-                try {
-                    inputStream = entity.getContent();
-                    final Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    return bitmap;
-                } finally {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
-                    entity.consumeContent();
-                }
-            }
-        } catch (Exception e) {
-            // Could provide a more explicit error message for IOException or
-            // IllegalStateException
-            getRequest.abort();
-            Log.w("DownloadDrawing", "Error while retrieving bitmap from " + url);
-        } finally {
-            if (client != null) {
-                client.close();
-            }
-        }
-        return null;
-    }
 	
 	public void sendText(View view) {
-		
 		// false is default (launched from main menu)
-		if (getIntent().getBooleanExtra("isLocal", false) == true) {
-			Intent intent = new Intent(this, DrawingActivity.class);
+		if (getIntent().getBooleanExtra("isLocal", false)) {
 		    EditText passText = (EditText) findViewById(R.id.text);
-		    intent.putExtra("Text", passText.getText().toString());
+		    
+		    LocalPlayHandler lph = LocalPlayHandler.getInstance();
+		    lph.endText(passText.getText().toString());
+		    
+		    Intent intent;
+		    if (lph.gameHasEnded())
+		    	intent = new Intent(this, ViewCompletedActivity.class);
+		    else
+		    	intent = new Intent(this, DrawingActivity.class);
+		    intent.putExtra("isLocal", true);
 		    startActivity(intent);
 		    finish();
 		}

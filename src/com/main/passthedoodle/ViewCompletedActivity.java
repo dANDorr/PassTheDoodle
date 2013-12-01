@@ -18,7 +18,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 
 public class ViewCompletedActivity extends FragmentActivity {
-	static ArrayList<TurnInfo> stringsList;
+	static ArrayList<RoundInfo> stringsList;
 	ViewPager mViewPager;
 	ViewCompletedPagerAdapter mViewCompletedPagerAdapter;
 	ImageLoader imageLoader;
@@ -41,41 +41,49 @@ public class ViewCompletedActivity extends FragmentActivity {
         										.build();
         imageLoader = ImageLoader.getInstance();
         imageLoader.init(ilConfig);
+
         
         // Stores strings that will be passed to each round fragment
         // Size of the list = # of drawings in the game = # fragments
-        stringsList = new ArrayList<TurnInfo>();
-        buildTest();
+        stringsList = new ArrayList<RoundInfo>();
         
+        if (getIntent().getBooleanExtra("isLocal", false)) {
+        	LocalPlayHandler lph = LocalPlayHandler.getInstance();
+        	stringsList = lph.gameRecord;
+        }        	
+        else {
+        	// do non-local stuff
+        	String gameID = getIntent().getStringExtra("GameID");
+            /* Implement method to retrieve from db
+             * for every drawing of gameID
+               		RoundInfo.imageUrl <- image urls
+               		RoundInfo.prompt <- description for (drawing sequence) - 1
+               		RoundInfo.guess <- description for (drawing sequence) + 1 or
+              			^set as empty string if odd # total rounds and game ends on a drawing
+               		add RoundInfo to stringsList
+             */
+        	buildTest();
+        }
+
         setContentView(R.layout.activity_viewcompleted);
         mViewCompletedPagerAdapter = new ViewCompletedPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.completed_pager);
         mViewPager.setPageTransformer(false, new DepthPageTransformer()); // fancy animation
         mViewPager.setAdapter(mViewCompletedPagerAdapter);
-
         mViewPager.setOffscreenPageLimit(2);
-        
-        String gameID = getIntent().getStringExtra("GameID");
-        /* Implement method to retrieve from db
-         * for every drawing of gameID
-           		TurnInfo.imageUrl <- image urls
-           		TurnInfo.prompt <- description for (drawing sequence) - 1
-           		TurnInfo.guess <- description for (drawing sequence) + 1
-           		add TurnInfo to stringsList
-         */
     }
 
     private void buildTest() {
-        stringsList.add(new TurnInfo("http://passthedoodle.com/i/26_1385351398.png", "Turtle", "Frog"));
-        stringsList.add(new TurnInfo("http://passthedoodle.com/i/3z1qsrmi.png", "Frog", "Battletoad"));
-        stringsList.add(new TurnInfo("http://i.imgur.com/JpKpG.jpg", "Battletoad", "Cheater"));
-        stringsList.add(new TurnInfo("http://i.imgur.com/OxMEYsj.jpg", "Cheater", "End"));
-        stringsList.add(new TurnInfo("http://i.imgur.com/oMLLDgE.jpg", "blah", "boop"));
-        stringsList.add(new TurnInfo("http://i.imgur.com/dLukzCx.jpg", "blah", "boop"));
-        stringsList.add(new TurnInfo("http://i.imgur.com/Vh8WEd2.jpg", "blah", "boop"));
-        stringsList.add(new TurnInfo("http://i.imgur.com/aFXrucw.jpg", "blah", "boop"));
-        stringsList.add(new TurnInfo("http://i.imgur.com/28Jq75s.jpg", "blah", "boop"));
-        stringsList.add(new TurnInfo("http://i.imgur.com/uUCzB9F.jpg", "blah", "boop"));
+        stringsList.add(new RoundInfo("http://passthedoodle.com/i/26_1385351398.png", "Turtle", "Frog"));
+        stringsList.add(new RoundInfo("http://passthedoodle.com/i/3z1qsrmi.png", "Frog", "Battletoad"));
+        stringsList.add(new RoundInfo("http://i.imgur.com/JpKpG.jpg", "Battletoad", "Cheater"));
+        stringsList.add(new RoundInfo("http://i.imgur.com/OxMEYsj.jpg", "Cheater", "End"));
+        stringsList.add(new RoundInfo("http://i.imgur.com/oMLLDgE.jpg", "blah", "boop"));
+        stringsList.add(new RoundInfo("http://i.imgur.com/dLukzCx.jpg", "blah", "boop"));
+        stringsList.add(new RoundInfo("http://i.imgur.com/Vh8WEd2.jpg", "blah", "boop"));
+        stringsList.add(new RoundInfo("http://i.imgur.com/aFXrucw.jpg", "blah", "boop"));
+        stringsList.add(new RoundInfo("http://i.imgur.com/28Jq75s.jpg", "blah", "boop"));
+        stringsList.add(new RoundInfo("http://i.imgur.com/uUCzB9F.jpg", "blah", "boop"));
     }
     
 	public static class ViewCompletedPagerAdapter extends FragmentStatePagerAdapter {
@@ -109,28 +117,22 @@ public class ViewCompletedActivity extends FragmentActivity {
         @Override
         public CharSequence getPageTitle(int position) {
         	int i = position % stringsList.size();
-            return (i*2 + 1) + " \u2192 " + (i*2 + 2);
+        	
+        	String str = " \u2192 " + (i*2 + 2);
+        	if (stringsList.get(i).desc.equals("")) {
+        		// ended on a drawing so only one # should be shown in tab title
+        		str = ""; 
+        	}        	
+            return (i*2 + 1) + str;
         }
     }
-
-	private class TurnInfo {
-		String imageUrl;
-		String prompt;
-		String desc;
-		
-		public TurnInfo(String a, String b, String c) {
-			imageUrl = a;
-			prompt = b;
-			desc = c;
-		}
-	}
 }
 
- class DepthPageTransformer implements ViewPager.PageTransformer {
-    private static float MIN_SCALE = 0.75f;
+class DepthPageTransformer implements ViewPager.PageTransformer {
+	private static float MIN_SCALE = 0.75f;
 
-    public void transformPage(View view, float position) {
-        int pageWidth = view.getWidth();
+	public void transformPage(View view, float position) {
+		int pageWidth = view.getWidth();
 
         if (position < -1) { // [-Infinity,-1)
             // This page is way off-screen to the left.

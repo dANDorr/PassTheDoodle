@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class NewGameFragment extends Fragment {
 
@@ -40,6 +41,8 @@ public class NewGameFragment extends Fragment {
 	// we add MIN_ROUNDS to every call to SeekBar's value.
 	// Max is 17 + 3 = 20
 	final int MIN_ROUNDS = 3;
+	
+	boolean selectedLocal;
 
 	// url to create new game
 	private static String url_create_game = "http://passthedoodle.com/test/create_game.php";
@@ -68,14 +71,38 @@ public class NewGameFragment extends Fragment {
 		
 		// Create button
 		Button btnCreateGame = (Button) getView().findViewById(R.id.btnCreateGame);
+		
+		// Local play toggle
+		ToggleButton tog = (ToggleButton) getView().findViewById(R.id.button_local_toggle);
 
-		// button click event
-		btnCreateGame.setOnClickListener(new View.OnClickListener() {
-
+		tog.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				// creating new game in background thread
-				new CreateNewGame().execute();
+				boolean on = ((ToggleButton) view).isChecked();
+			    if (on) {
+			        selectedLocal = true;
+			    } else {
+			        selectedLocal = false;
+			    }
+			}
+		});
+		
+		// button click event
+		btnCreateGame.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (selectedLocal) {
+					// create local game
+					int roundsInt = inputRounds.getProgress() + MIN_ROUNDS;
+					Intent intent = new Intent(getActivity(), DrawingActivity.class);
+	                intent.putExtra("isLocal", true);
+	                LocalPlayHandler lph = LocalPlayHandler.getInstance();
+	                lph.startGame(getActivity(), roundsInt);
+	                startActivity(intent);
+				} else {
+					// creating new game in background thread
+					new CreateNewGame().execute();
+				}
 			}
 		});
 	}

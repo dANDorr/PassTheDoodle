@@ -1,6 +1,8 @@
 package com.main.passthedoodle;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -23,10 +25,12 @@ import android.provider.MediaStore;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -49,6 +53,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
 	private SubmitDrawingTask mDrawingTask = null;
 	
 	private boolean isLocal;
+	String promptString = "";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -96,9 +101,6 @@ public class DrawingActivity extends Activity implements OnClickListener {
         //save button
         saveBtn = (ImageButton)findViewById(R.id.submit_btn);
         saveBtn.setOnClickListener(this);
-        
-        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
-        newDialog.setTitle("Prompt");
         
         isLocal = getIntent().getBooleanExtra("isLocal", false);
 	}
@@ -301,15 +303,11 @@ public class DrawingActivity extends Activity implements OnClickListener {
             AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
             newDialog.setTitle("Prompt");
 
-            String promptString ="";
-            Intent intent = getIntent();
-            promptString = intent.getStringExtra("Text");
-            if (promptString != null && isLocal) {
-            	// Prompt received text from TextActivity local play              	
-                //newDialog.setMessage(promptString);
+            if (isLocal) {
+            	LocalPlayHandler lph = LocalPlayHandler.getInstance();
+            	promptString = lph.currentText;
             }
-            else if (!isLocal) {
-            	// Not local so load promp from database
+            else { // Not local so load prompt from database
                 try {
                 	promptString = new GetPrompt().execute().get();
                 } catch (InterruptedException e) {
@@ -321,11 +319,6 @@ public class DrawingActivity extends Activity implements OnClickListener {
                 }
             }
 
-            if (getIntent().getBooleanExtra("isInitialRound", false)){
-            	// Starting new game, generate word for prompt.
-            	// Pass in .txt filename for the appropriate difficulty level.
-            	promptString = new WordGenerator(this, "hard.txt").getWord();
-            }
             newDialog.setMessage(promptString);
             
             newDialog.setNeutralButton("OK", new DialogInterface.OnClickListener(){
@@ -344,24 +337,33 @@ public class DrawingActivity extends Activity implements OnClickListener {
                 public void onClick(DialogInterface dialog, int which){
                     dialog.dismiss();
 
-                    // Local play - pass drawing image to TextActivity
-                    Intent intent = new Intent(DrawingActivity.this, TextActivity.class);
-
                     drawView.setDrawingCacheEnabled(true);
                     Bitmap passBitmap = drawView.getDrawingCache().copy(Bitmap.Config.ARGB_8888, false);
                     drawView.destroyDrawingCache();
 
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    passBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    byteArray = stream.toByteArray();
-
                     if (isLocal) {
-                    	// tells TextActivity which image loading method to use
-                        intent.putExtra("isLocal", true);
-                        intent.putExtra("Image", byteArray);
+                        // write image to cache, pass its file path to LocalPlayHandler.
+                    	// image probably gets cached twice when UIL loads the file but oh well
+                        CacheWriter cw = new CacheWriter();
+                        String hash = "" + passBitmap.hashCode();
+                        String imagePath = cw.putBitmapInDiskCache(DrawingActivity.this, passBitmap, hash);
+                        LocalPlayHandler lph = LocalPlayHandler.getInstance();
+                        lph.endDrawing(imagePath);
+                        
+            		    Intent intent;
+            		    if (lph.gameHasEnded())
+            		    	intent = new Intent(DrawingActivity.this, ViewCompletedActivity.class);
+            		    else
+            		    	intent = new Intent(DrawingActivity.this, TextActivity.class);
+            		    // tells TextActivity which image loading method to use
+            		    intent.putExtra("isLocal", true); 
+
                         startActivity(intent);
                         finish();
                     } else {
+                    	ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        passBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        byteArray = stream.toByteArray();
                     	// Submit picture to server
                         mDrawingTask = new SubmitDrawingTask();
                         mDrawingTask.execute();
@@ -376,6 +378,32 @@ public class DrawingActivity extends Activity implements OnClickListener {
             newDialog.show();
         }
 	}
+	public class CacheWriter {
+		public String putBitmapInDiskCache(Context cont, Bitmap drawing, String hash) {     
+		    // Create a path pointing to the system-recommended cache dir for the app, with sub-dir named
+		    // temp
+			File cacheDir = new File(cont.getCacheDir(), "");
+			cacheDir.mkdirs();
+		    // Create a path in that dir for a file, named by the default hash
+		    File cacheFile = new File(cacheDir, hash+".png");
+		    try {
+		        // Create a file at the file path, and open it for writing the output stream
+		        cacheFile.createNewFile();
+		        FileOutputStream fos = new FileOutputStream(cacheFile);
+		        // Write the bitmap to the output stream (and thus the file) in PNG format (lossless compression)     
+		        drawing.compress(CompressFormat.PNG, 100, fos);
+		        // Flush and close the output stream
+		        fos.flush();
+		        fos.close();
+		        Log.d("putBitmapInDiskCache", "wrote to " + cacheFile.getAbsolutePath());
+		    } catch (Exception e) {
+		        // Log anything that might go wrong with IO to file      
+		        Log.e("SubmitDrawingCache", "Error when saving image to cache. ", e);
+		    }
+		    return "file://"+cacheFile.getAbsolutePath();
+		}
+	}
+	
 	
 	public class GetPrompt extends AsyncTask<String, Void, String> {
         @Override

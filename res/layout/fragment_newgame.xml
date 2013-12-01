@@ -5,6 +5,7 @@
     android:orientation="vertical" >
     
     <!-- Title Label -->
+
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,6 +51,7 @@
 	    android:max="17" />
 	
 	<!-- Description Label -->
+
     <TextView android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Description"
@@ -68,6 +70,23 @@
 	    android:gravity="top"/>
 	
 	<!-- Button Create Game -->
+
+	<TextView
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:paddingLeft="10dip"
+	    android:paddingRight="10dip"
+	    android:paddingTop="10dip"
+	    android:text="Local play"
+	    android:textSize="17dip" />
+
+	<ToggleButton
+	    android:id="@+id/button_local_toggle"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="left"
+	    android:text="Local Toggle" />
+
 	<Button android:id="@+id/btnCreateGame" 
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
