@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -281,9 +282,7 @@ public class LoginActivity extends Activity {
             	// TODO: Alter this to send user to the game menu
                 Toast.makeText(getApplicationContext(), "Logged in!", Toast.LENGTH_LONG).show();
                 //Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish();
+                finish(); // don't create new MainActivity
             } else if (headerCode == 401) { //Unauthorized
                 Toast.makeText(getApplicationContext(), "Incorrect username/password!", Toast.LENGTH_LONG).show();
             } else if (headerCode == 403) { //Forbidden (banned)
