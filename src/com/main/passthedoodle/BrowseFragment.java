@@ -10,16 +10,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
-import android.app.ListActivity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,39 +98,72 @@ import android.widget.Toast;
             lv.setOnItemClickListener(new OnItemClickListener() {
 
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                        int position, long idd) {
+                public void onItemClick(AdapterView<?> parent, View view, int position, long idd) {
                     // getting values from selected ListItem
-                    String id = ((TextView) view.findViewById(R.id.id)).getText().toString();
-                    String name = ((TextView) view.findViewById(R.id.name)).getText().toString();
-                    String filename = ((TextView) view.findViewById(R.id.filename)).getText().toString();
-                    String description = ((TextView) view.findViewById(R.id.description)).getText().toString();
+                    final String id = ((TextView) view.findViewById(R.id.id)).getText().toString().substring(5);
+                    final String name = ((TextView) view.findViewById(R.id.name)).getText().toString();
+                    final String filename = ((TextView) view.findViewById(R.id.filename)).getText().toString();
+                    final String description = ((TextView) view.findViewById(R.id.description)).getText().toString();
+                    Log.d("VALUES", "id:" + id + " name:" + name + " filename:" + filename + " description:" + description);
 
-                    // Starting new intent
-                    Intent in;
-/*                    try {
-                        /*if (Integer.parseInt(games.getJSONObject(Integer.parseInt(id)).getString(TAG_CURSEQ)) % 2 == 0) {
-                            in= new Intent(getActivity(), DrawingActivity.class); ///EditGameActivity.class
+                    try {
+                        if (!filename.equals("null")) {
+                            AlertDialog.Builder drawDialog = new AlertDialog.Builder(getActivity());
+                            drawDialog.setTitle("Describe this drawing?");
+                            drawDialog.setMessage("image: http://passthedoodle.com/i/" + filename);
+                            drawDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+                                public void onClick(DialogInterface dialog, int which){
+                                    //start drawing activity
+                                    Intent in = new Intent(getActivity(), TextActivity.class);
+                                    in.putExtra(TAG_ID, id);
+                                    in.putExtra(TAG_NAME, name);
+                                    in.putExtra(TAG_FILENAME, filename);
+                                    startActivity(in);
+                                    //startActivityForResult(in, 100);
+                                }
+                            });
+                            drawDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                                public void onClick(DialogInterface dialog, int which){
+                                    dialog.cancel();
+                                }
+                            });
+                            drawDialog.show();
+                        } else if (!description.equals("null")) {
+                            AlertDialog.Builder textDialog = new AlertDialog.Builder(getActivity());
+                            textDialog.setTitle("Draw this prompt?");
+                            textDialog.setMessage("Prompt: " + description);
+                            textDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+                                public void onClick(DialogInterface dialog, int which){
+                                    //start text activity
+                                    Intent in= new Intent(getActivity(), DrawingActivity.class);
+                                    in.putExtra(TAG_ID, id);
+                                    in.putExtra(TAG_NAME, name);
+                                    in.putExtra(TAG_DESC, description);
+                                    startActivity(in);
+                                    //startActivityForResult(in, 100);
+                                }
+                            });
+                            textDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                                public void onClick(DialogInterface dialog, int which){
+                                    dialog.cancel();
+                                }
+                            });
+                            textDialog.show();
                         } else {
-                            in= new Intent(getActivity(), TextActivity.class); ///EditGameActivity.class
-                        }//*
-                        // sending id to next activity
-                        in.putExtra(TAG_ID, id);
-                        in.putExtra(TAG_NAME, name);
-                        in.putExtra(TAG_FILENAME, filename);
-                        in.putExtra(TAG_DESC, description);
-                        
-                        startActivity(in);
+                            AlertDialog.Builder nullDialog = new AlertDialog.Builder(getActivity());
+                            nullDialog.setTitle("Game not available");
+                            nullDialog.setMessage("Choose another game please.");
+                            nullDialog.setNeutralButton("OK", new DialogInterface.OnClickListener(){
+                                public void onClick(DialogInterface dialog, int which){
+                                    dialog.dismiss();
+                                }
+                            });
+                            nullDialog.show();
+                        }
                     } catch (NumberFormatException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
                     }
-*/                    
-                    // starting new activity and expecting some response back
-                    //startActivityForResult(in, 100);
                 }
             });
         }
@@ -202,14 +234,15 @@ import android.widget.Toast;
                             JSONObject c = games.getJSONObject(i);
 
                             // Storing each json item in variable
-                            String id = c.getString(TAG_ID);
+                            String id = "Game " + c.getString(TAG_ID);
                             String name = c.getString(TAG_NAME);
                             String filename = c.getString(TAG_FILENAME);
                             String description = c.getString(TAG_DESC);
-                            String icon;
-                            if (filename != null) icon = "R.drawable.brush";
-                            else if (description != null) icon = "R.drawable.new_pic";
-                            else icon = "R.drawable.ptd_icon";
+                            
+                            String icon = "";
+                            if (!filename.equals("null")) icon = Integer.toString(R.drawable.icon_text);
+                            else if (!description.equals("null")) icon = Integer.toString(R.drawable.icon_pencil);
+                            else icon = Integer.toString(R.drawable.icon_x);
 
                             // creating new HashMap
                             HashMap<String, String> map = new HashMap<String, String>();
@@ -268,16 +301,14 @@ import android.widget.Toast;
                         /**
                          * Updating parsed JSON data into ListView
                          * */
-                        String icon = "R.drawable.ptd_logo";
                         ListAdapter adapter = new SimpleAdapter(
                         		getActivity(), gamesList,
-                                R.layout.item_layout, new String[] { TAG_ID, TAG_NAME, icon, TAG_FILENAME, TAG_DESC },
-                                new int[] { R.id.id, R.id.name, R.id.icon, R.id.filename, R.id.description });
+                                R.layout.item_layout, new String[] { TAG_ID, TAG_NAME, TAG_FILENAME, TAG_DESC, TAG_ICON },
+                                new int[] { R.id.id, R.id.name, R.id.filename, R.id.description, R.id.icon });
                         // updating listview
                         setListAdapter(adapter);
                     }
                 });
-
             }
         }
     }

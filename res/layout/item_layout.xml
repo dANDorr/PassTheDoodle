@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
@@ -13,36 +13,36 @@
         android:adjustViewBounds="true"
         android:maxHeight="80dp"
         android:maxWidth="80dp"
-        android:src="@drawable/ptd_logo" />
+         />
     
     <TextView
         android:id="@+id/id"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/icon"
         android:paddingTop="6dip"
         android:paddingLeft="6dip"
-        android:textSize="24dip"
-        android:textStyle="bold" />
+        android:textSize="24dip" />
     <TextView
         android:id="@+id/name"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="3dip"
+        android:layout_toRightOf="@+id/icon"
+        android:layout_below="@+id/id"
+        android:paddingTop="6dip"
         android:paddingLeft="6dip"
         android:textSize="18dip" />
     <TextView
         android:id="@+id/filename"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="3dip"
-        android:paddingLeft="6dip"
-        android:textSize="18dip" />
+        android:textSize="0sp"
+        android:visibility="gone" />
     <TextView
         android:id="@+id/description"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="3dip"
-        android:paddingLeft="6dip"
-        android:textSize="18dip" />
+        android:textSize="0sp"
+        android:visibility="gone" />
 
-</LinearLayout>
+</RelativeLayout>
