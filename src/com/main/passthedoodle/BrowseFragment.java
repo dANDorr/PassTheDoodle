@@ -49,10 +49,10 @@ import android.widget.Toast;
         private static final String TAG_SUCCESS = "success";
         private static final String TAG_GAMES = "games";
         private static final String TAG_ID = "id";
-        private static final String TAG_CREATORID = "creator_id";
-        private static final String TAG_CREATOR = "creator";
-        private static final String TAG_LASTPLAYER = "lastplayer";
-        private static final String TAG_CURSEQ = "cur_sequence";
+        private static final String TAG_NAME = "name";
+        private static final String TAG_FILENAME = "filename";
+        private static final String TAG_DESC = "description";
+        private static final String TAG_ICON = "icon";
 
         // games JSONArray
         JSONArray games = null;
@@ -102,20 +102,25 @@ import android.widget.Toast;
                 public void onItemClick(AdapterView<?> parent, View view,
                         int position, long idd) {
                     // getting values from selected ListItem
-                    String id = ((TextView) view.findViewById(R.id.id)).getText()
-                            .toString().substring(5);
+                    String id = ((TextView) view.findViewById(R.id.id)).getText().toString();
+                    String name = ((TextView) view.findViewById(R.id.name)).getText().toString();
+                    String filename = ((TextView) view.findViewById(R.id.filename)).getText().toString();
+                    String description = ((TextView) view.findViewById(R.id.description)).getText().toString();
 
                     // Starting new intent
                     Intent in;
-                    try {
-                        if (Integer.parseInt(games.getJSONObject(Integer.parseInt(id)).getString(TAG_CURSEQ)) % 2 == 0) {
+/*                    try {
+                        /*if (Integer.parseInt(games.getJSONObject(Integer.parseInt(id)).getString(TAG_CURSEQ)) % 2 == 0) {
                             in= new Intent(getActivity(), DrawingActivity.class); ///EditGameActivity.class
                         } else {
                             in= new Intent(getActivity(), TextActivity.class); ///EditGameActivity.class
-                        }
+                        }//*
                         // sending id to next activity
                         in.putExtra(TAG_ID, id);
-                        //getActivity().finish();
+                        in.putExtra(TAG_NAME, name);
+                        in.putExtra(TAG_FILENAME, filename);
+                        in.putExtra(TAG_DESC, description);
+                        
                         startActivity(in);
                     } catch (NumberFormatException e) {
                         // TODO Auto-generated catch block
@@ -124,7 +129,7 @@ import android.widget.Toast;
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    
+*/                    
                     // starting new activity and expecting some response back
                     //startActivityForResult(in, 100);
                 }
@@ -192,26 +197,24 @@ import android.widget.Toast;
                             JSONObject c = games.getJSONObject(i);
 
                             // Storing each json item in variable
-                            String id = "Game " + c.getString(TAG_ID);
-                            String creator_id = c.getString(TAG_CREATORID);
-                            String creator = c.getString(TAG_CREATOR);
-                            String lastplayer = c.getString(TAG_LASTPLAYER);
-                            String curSequence;
-                            if (Integer.parseInt(c.getString(TAG_CURSEQ)) % 2 == 0) {
-                                curSequence = "DRAW IT!!";
-                            } else {
-                                curSequence = "DESCRIBE IT!!";
-                            }
+                            String id = c.getString(TAG_ID);
+                            String name = c.getString(TAG_NAME);
+                            String filename = c.getString(TAG_FILENAME);
+                            String description = c.getString(TAG_DESC);
+                            String icon;
+                            if (filename != null) icon = "R.drawable.brush";
+                            else if (description != null) icon = "R.drawable.new_pic";
+                            else icon = "R.drawable.ptd_icon";
 
                             // creating new HashMap
                             HashMap<String, String> map = new HashMap<String, String>();
 
                             // adding each child node to HashMap key => value
                             map.put(TAG_ID, id);
-                            map.put(TAG_CREATORID, "creator id: " + creator_id);
-                            map.put(TAG_CREATOR, "creator: " + creator);
-                            map.put(TAG_LASTPLAYER, "last player: " + lastplayer);
-                            map.put(TAG_CURSEQ, curSequence);
+                            map.put(TAG_NAME, name);
+                            map.put(TAG_FILENAME, filename);
+                            map.put(TAG_DESC, description);
+                            map.put(TAG_ICON, icon);
 
                             // adding HashList to ArrayList
                             gamesList.add(map);
@@ -260,11 +263,11 @@ import android.widget.Toast;
                         /**
                          * Updating parsed JSON data into ListView
                          * */
+                        String icon = "R.drawable.ptd_logo";
                         ListAdapter adapter = new SimpleAdapter(
                         		getActivity(), gamesList,
-                                R.layout.item_layout, new String[] { TAG_ID,
-                                        TAG_CURSEQ, TAG_CREATORID, TAG_CREATOR, TAG_LASTPLAYER},
-                                new int[] { R.id.id, R.id.play, R.id.creatorid, R.id.creator, R.id.lastplayer });
+                                R.layout.item_layout, new String[] { TAG_ID, TAG_NAME, icon, TAG_FILENAME, TAG_DESC },
+                                new int[] { R.id.id, R.id.name, R.id.icon, R.id.filename, R.id.description });
                         // updating listview
                         setListAdapter(adapter);
                     }
