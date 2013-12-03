@@ -74,7 +74,7 @@ import android.widget.Toast;
 			            .setOnClickListener(new View.OnClickListener() {
 			                @Override
 			                public void onClick(View view) {
-			                	//TODO: implement refresh games
+			                	refreshList();
 			                }
 			            });
     		
@@ -149,6 +149,11 @@ import android.widget.Toast;
                 getActivity().finish();
                 startActivity(intent);
             }
+        }
+        
+        public void refreshList() {
+        	gamesList.clear();
+        	new LoadAllGames().execute();
         }
 
         /**

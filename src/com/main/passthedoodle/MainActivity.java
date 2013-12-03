@@ -7,10 +7,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 public class MainActivity extends FragmentActivity {
     
@@ -81,7 +84,7 @@ public class MainActivity extends FragmentActivity {
     public static class HomeFragment extends Fragment {
     	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     		View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-    		
+
     		rootView.findViewById(R.id.button_login)
             			.setOnClickListener(new View.OnClickListener() {
             				@Override
@@ -100,7 +103,7 @@ public class MainActivity extends FragmentActivity {
 						});
     		return rootView;
     	}
-    }
+    }    
     
     public static class TempFragment extends Fragment {
     	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

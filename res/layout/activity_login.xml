@@ -68,27 +68,53 @@
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true" />
-
-            <Button
-                android:id="@+id/sign_in_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginTop="16dp"
-                android:paddingLeft="32dp"
-                android:paddingRight="32dp"
-                android:text="@string/action_sign_in_short" />    
-                        
-            <Button
-        		android:id="@+id/register_button"
-        		android:layout_width="wrap_content"
-        		android:layout_height="wrap_content"
-        		android:layout_gravity="right"
-        		android:layout_marginBottom="10dp"
-        		android:text="@string/action_register_short" />
             
+            <LinearLayout 
+                android:layout_width="match_parent"
+        		android:layout_height="wrap_content"
+        		android:orientation="horizontal" 
+        		android:weightSum="1.0" >
+        		
+        		<LinearLayout 
+	                android:layout_width="1dp"
+	        		android:layout_height="match_parent"
+	        		android:layout_weight=".7" > </LinearLayout>
+        		
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:layout_weight=".3" >
 
+                    <Button
+		                android:id="@+id/sign_in_button"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_gravity="right"
+		                android:layout_marginTop="10dp"
+		                android:paddingLeft="0dp"
+		                android:paddingRight="0dp"
+		                android:text="@string/action_sign_in_short"
+		                android:layout_marginBottom="10dp"
+		                style="@style/btnStyleArsenic"
+        				android:background="@drawable/custom_btn_arsenic" />    
+                        
+		            <Button
+		        		android:id="@+id/register_button"
+		        		android:layout_width="match_parent"
+		        		android:layout_height="wrap_content"
+		        		android:layout_gravity="right"
+		        		android:layout_marginBottom="10dp"
+		        		android:text="@string/action_register_short"
+		        		style="@style/btnStyleArsenic"
+        				android:background="@drawable/custom_btn_arsenic" />  
+                </LinearLayout>
+                
+            </LinearLayout>
+            
         </LinearLayout>
+
     </ScrollView>
 
 </merge>

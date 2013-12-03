@@ -23,27 +23,39 @@
             android:textSize="32sp" />
 
         </LinearLayout>
-        
+	
     <LinearLayout
         android:id="@+id/buttonBar"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal" 
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/title" >
+        android:layout_below="@+id/title" 
+        android:weightSum="1.0"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp">
 
         <Button
             android:id="@+id/btnAdd"
-            android:layout_width="150dp"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
+            android:layout_weight=".5"
             android:onClick="onClick_Add"
-            android:text="New Game" />
+            android:text="New Game"
+            style="@style/btnStyleArsenic"
+            android:background="@drawable/custom_btn_arsenic"
+            android:layout_marginRight="10dp" />
         
         <Button
             android:id="@+id/btnClear"
-            android:layout_width="150dp"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
+            android:layout_weight=".5"
             android:onClick="onClick_Refresh"
-            android:text="Refresh" />
+            android:text="Refresh"
+            style="@style/btnStyleArsenic"
+            android:background="@drawable/custom_btn_arsenic" />
+
     </LinearLayout>
 
     <ListView

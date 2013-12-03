@@ -25,5 +25,7 @@
     <dimen name="extra_large_brush">30dp</dimen>
     
     <integer name="extra_large_size">30</integer>
+    
+    <dimen name="subtle_border">.3dp</dimen>
 
 </resources>

@@ -2,23 +2,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFCCCCCC"
+    android:background="@color/sysLtGray"
     android:orientation="vertical" >
-
+    
     <TextView
         android:id="@+id/completed_text_view_top"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_weight="15"
-        android:text="TextView"
+        android:layout_weight="12"
         android:gravity="center" 
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:textColor="@color/sysWhite"
+        android:background="@color/accent" />
+    
+    <View
+    	android:layout_width="fill_parent"
+    	android:layout_height="@dimen/subtle_border"
+    	android:visibility="visible"
+    	android:background="@color/sysLtGray"/>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:layout_weight="110"
-        android:background="#FFFFFFFF"
+        android:background="@color/sysWhite"
         android:gravity="center_vertical"
         android:orientation="vertical" >
 
@@ -40,13 +47,20 @@
 
     </LinearLayout>
     
+    <View
+    	android:layout_width="fill_parent"
+    	android:layout_height="@dimen/subtle_border"
+    	android:visibility="visible"
+    	android:background="@color/sysLtGray"/>
+    
     <TextView
         android:id="@+id/completed_text_view_bottom"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_weight="15"
-        android:text="TextView"
+        android:layout_weight="12"
         android:gravity="center" 
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:textColor="@color/sysWhite"
+        android:background="@color/accent" />
 
 </LinearLayout>

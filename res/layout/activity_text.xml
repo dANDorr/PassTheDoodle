@@ -5,21 +5,22 @@
     android:background="#FFCCCCCC"
     android:orientation="vertical"
     tools:context=".TextActivity" >
-
+    
     <TextView
-        android:id="@+id/prompt_text_view"
+        android:id="@+id/text_activity_prompt_view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_weight="15"
-        android:text="TextView"
+        android:layout_weight="12"
         android:gravity="center" 
-        android:textSize="20sp" />
-
+        android:textSize="20sp"
+        android:textColor="@color/sysWhite"
+        android:background="@color/accent" />
+    
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:layout_weight="110"
-        android:background="#FFFFFFFF"
+        android:background="@color/sysWhite"
         android:gravity="center_vertical"
         android:orientation="vertical" >
 
@@ -43,16 +44,18 @@
 	
 	<LinearLayout
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:gravity="bottom"
-	    android:layout_weight="1" >
+	    android:layout_height="1dp"
+	    android:gravity="center"
+	    android:layout_weight="12"
+	    android:background="@color/accent" >
 
         <EditText
             android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="9"
-            android:textSize="20sp"      
+            android:textSize="20sp"
+			android:textColor="@color/sysWhite"
             android:hint="@string/hint_text_response" />
 
         <Button
@@ -62,7 +65,9 @@
             android:layout_weight="1"
             android:onClick="sendText"
             android:textSize="20sp"
-            android:text="Submit" />
+            android:text="Submit"
+            style="@style/btnStyleArsenic"
+            android:background="@drawable/custom_btn_arsenic" />
 
     </LinearLayout>
 

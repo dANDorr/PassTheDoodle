@@ -62,7 +62,7 @@ public class TextActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_text);		
 		submitText = (EditText) findViewById(R.id.text);
-		promptTextView = (TextView) findViewById(R.id.prompt_text_view);
+		promptTextView = (TextView) findViewById(R.id.text_activity_prompt_view);
 		drawingImageView = (ImageView) findViewById(R.id.drawing_image_view);
 		spinningCircle = (ProgressBar) findViewById(R.id.loading_image_circle);
 		
