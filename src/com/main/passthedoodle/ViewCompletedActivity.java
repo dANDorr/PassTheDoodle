@@ -47,12 +47,17 @@ public class ViewCompletedActivity extends FragmentActivity {
         // Size of the list = # of drawings in the game = # fragments
         stringsList = new ArrayList<RoundInfo>();
         
-        if (getIntent().getBooleanExtra("isLocal", false)) {
+        if (getIntent().getIntExtra("option", 0) == 1) {
+            // TODO: do local stuff
         	LocalPlayHandler lph = LocalPlayHandler.getInstance();
         	stringsList = lph.gameRecord;
-        }        	
-        else {
-        	// do non-local stuff
+        }
+        else if (getIntent().getIntExtra("option", 0) == 2) {
+            // TODO: do non-local stuff
+            // - show completed game list from online db (similar to BrowseFragment).
+            // - upon selection retrieve images and description of game from online db.
+            // - implement it in mViewPager
+            
         	String gameID = getIntent().getStringExtra("GameID");
             /* Implement method to retrieve from db
              * for every drawing of gameID
@@ -62,6 +67,8 @@ public class ViewCompletedActivity extends FragmentActivity {
               			^set as empty string if odd # total rounds and game ends on a drawing
                		add RoundInfo to stringsList
              */
+        }
+        else {
         	buildTest();
         }
 

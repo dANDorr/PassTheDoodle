@@ -82,22 +82,20 @@ public class MainActivity extends FragmentActivity {
     	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     		View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-    		rootView.findViewById(R.id.button_login)
-            			.setOnClickListener(new View.OnClickListener() {
-            				@Override
-				    		public void onClick(View view) {
-				                Intent intent = new Intent(getActivity(), LoginActivity.class);
-				                startActivity(intent);
-				            }
-            			});
-    		rootView.findViewById(R.id.button_guest)
-						.setOnClickListener(new View.OnClickListener() {
-							@Override
-				    		public void onClick(View view) {
-				                Intent intent = new Intent(getActivity(), RegisterActivity.class);
-				                startActivity(intent);
-				            }
-						});
+    		rootView.findViewById(R.id.button_login).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+    		rootView.findViewById(R.id.button_guest).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), RegisterActivity.class);
+                    startActivity(intent);
+                }
+            });
     		return rootView;
     	}
     }    
@@ -106,42 +104,55 @@ public class MainActivity extends FragmentActivity {
     	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     		View rootView = inflater.inflate(R.layout.fragment_temp, container, false);
     		
-    		rootView.findViewById(R.id.button_paint)
-						.setOnClickListener(new View.OnClickListener() {
-							@Override
-				    		public void onClick(View view) {
-				                Intent intent = new Intent(getActivity(), DrawingActivity.class);
-				                intent.putExtra("description", "draw anything");
-				                startActivity(intent);
-				            }
-						});
-			rootView.findViewById(R.id.button_guess)
-						.setOnClickListener(new View.OnClickListener() {
-							@Override
-				    		public void onClick(View view) {
-				                Intent intent = new Intent(getActivity(), TextActivity.class);
-				                intent.putExtra("filename", "l2ybsxynzj.png");
-				                startActivity(intent);
-				            }
-						});
-			rootView.findViewById(R.id.button_local_play)
-						.setOnClickListener(new View.OnClickListener() {
-							@Override
-				    		public void onClick(View view) {
-				                Intent intent = new Intent(getActivity(), DrawingActivity.class);
-				                intent.putExtra("isLocal", true);
-				                intent.putExtra("isInitialRound", true);
-				                startActivity(intent);
-				            }
-						});			
-			rootView.findViewById(R.id.button_comp)
-						.setOnClickListener(new View.OnClickListener() {
-							@Override
-				    		public void onClick(View view) {
-				                Intent intent = new Intent(getActivity(), ViewCompletedActivity.class);
-				                startActivity(intent);
-				            }
-						});
+    		rootView.findViewById(R.id.button_paint).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), DrawingActivity.class);
+                    intent.putExtra("description", "draw anything");
+                    startActivity(intent);
+                }
+            });
+    		rootView.findViewById(R.id.button_guess).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), TextActivity.class);
+                    intent.putExtra("filename", "l2ybsxynzj.png");
+                    startActivity(intent);
+                }
+            });
+			rootView.findViewById(R.id.button_local_play).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), DrawingActivity.class);
+                    intent.putExtra("isLocal", true);
+                    intent.putExtra("isInitialRound", true);
+                    startActivity(intent);
+                }
+            }); 		
+			rootView.findViewById(R.id.button_comp).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), ViewCompletedActivity.class);
+                    intent.putExtra("option", 0);
+                    startActivity(intent);
+                }
+            });
+			rootView.findViewById(R.id.button_comp_local).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), ViewCompletedActivity.class);
+                    intent.putExtra("option", 1);
+                    startActivity(intent);
+                }
+            });
+			rootView.findViewById(R.id.button_comp_db).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), ViewCompletedActivity.class);
+                    intent.putExtra("option", 2);
+                    startActivity(intent);
+                }
+            });
 
 			return rootView;
     	}
