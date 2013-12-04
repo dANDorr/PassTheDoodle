@@ -3,12 +3,17 @@ package com.main.passthedoodle;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,6 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class NewGameFragment extends Fragment {
@@ -48,7 +54,7 @@ public class NewGameFragment extends Fragment {
 	private static String url_create_game = "http://passthedoodle.com/test/create_game.php";
 
 	// JSON Node names
-	private static final String TAG_SUCCESS = "success";
+	//private static final String TAG_SUCCESS = "success";
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
@@ -110,7 +116,7 @@ public class NewGameFragment extends Fragment {
 	/**
 	 * Background Async Task to Create new Game
 	 * */
-	class CreateNewGame extends AsyncTask<String, String, String> {
+	class CreateNewGame extends AsyncTask<String, String, Integer> {
 
 		/**
 		 * Before starting background thread Show Progress Dialog
@@ -128,11 +134,13 @@ public class NewGameFragment extends Fragment {
 		/**
 		 * Creating game
 		 * */
-		protected String doInBackground(String... args) {
+		protected Integer doInBackground(String... args) {
 			String name = inputName.getText().toString();
 			int roundsInt = inputRounds.getProgress() + MIN_ROUNDS;
 			String rounds = "" + roundsInt;
 			String description = inputDesc.getText().toString();
+			String output = null;
+            int responseCode = 0;
 
 			// Building Parameters
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -142,39 +150,34 @@ public class NewGameFragment extends Fragment {
 			params.add(new BasicNameValuePair("name", name));
 			params.add(new BasicNameValuePair("rounds", rounds));
 			params.add(new BasicNameValuePair("description", description));
-
-			// getting JSON Object
-			// Note that create game url accepts POST method
-			JSONObject json = jsonParser.makeHttpRequest(url_create_game,
-					"POST", params);
 			
-			// check log cat fro response
-			Log.d("Create Response", json.toString());
-
-			// check for success tag
 			try {
-				int success = json.getInt(TAG_SUCCESS);
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpPost httppost = new HttpPost(url_create_game);
+                httppost.setEntity(new UrlEncodedFormEntity(params));
+                HttpResponse response = httpclient.execute(httppost);
 
-				if (success == 1) {
-					// successfully created game, jump to Games list tab
-					ViewPager vp = (ViewPager) getActivity().findViewById(R.id.main_pager);
-					vp.setCurrentItem(getResources().getInteger(R.integer.browse_tab));
-				} else {
-					// failed to create game
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-
-			return null;
+                // print response
+                output = EntityUtils.toString(response.getEntity());
+                responseCode = response.getStatusLine().getStatusCode();
+                Log.d("GET RESPONSE", output + " -- statuscode: " + responseCode);
+            } catch (Exception e) {
+                Log.e("log_tag", "Error in http connection -- " + e.toString());
+            }
+            return responseCode;
 		}
 
 		/**
 		 * After completing background task Dismiss the progress dialog
 		 * **/
-		protected void onPostExecute(String file_url) {
+		protected void onPostExecute(Integer headerCode) {
 			// dismiss the dialog once done
 			pDialog.dismiss();
+			if (headerCode == 202) 
+			    Toast.makeText(getActivity().getApplicationContext(), "Game successfully created.", Toast.LENGTH_LONG).show();
+			else if (headerCode == 401)
+			    Toast.makeText(getActivity().getApplicationContext(), "Error. Game not created.", Toast.LENGTH_LONG).show();
+			else Toast.makeText(getActivity().getApplicationContext(), "Unknown error. Game not created.", Toast.LENGTH_LONG).show();
 		}
 	}
 
