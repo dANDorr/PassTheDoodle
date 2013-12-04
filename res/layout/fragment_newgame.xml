@@ -1,108 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical" >
-    
-    <!-- Title Label -->
 
-    <TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="Create New Game"
-		android:textSize="32sp" />
-        
-    <!-- Name Label -->
-    <TextView android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Game Name"
-        android:paddingLeft="10dip"
-        android:paddingRight="10dip"
-        android:paddingTop="10dip"
-        android:textSize="17dip"/>
-    
-    <!-- Input Name -->
-	<EditText android:id="@+id/inputName"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_margin="5dip"
-	    android:layout_marginBottom="15dip"
-	    android:singleLine="true"/>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:paddingBottom="@dimen/activity_vertical_margin"
+	    android:paddingLeft="@dimen/activity_horizontal_margin"
+	    android:paddingRight="@dimen/activity_horizontal_margin"
+	    android:paddingTop="@dimen/activity_vertical_margin"
+	    android:orientation="vertical" >
+	    
+	    <!-- Title Label -->
 	
-	<!-- Rounds Label -->
-    <TextView
-		android:id="@+id/asdf"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Rounds"
-        android:paddingLeft="10dip"
-        android:paddingRight="10dip"
-        android:paddingTop="10dip"
-        android:textSize="17dip" />
-    
-    <!-- Input Rounds -->
-
-    <SeekBar
-        android:id="@+id/inputRounds"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dip"
-	    android:layout_marginBottom="15dip"
-	    android:max="17" />
+	    <TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Create New Game"
+			android:textSize="32sp" />
+	        
+	    <!-- Name Label -->
+	    <TextView android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Game Name"
+	        android:paddingLeft="10dip"
+	        android:paddingRight="10dip"
+	        android:paddingTop="10dip"
+	        android:textSize="17dip"/>
+	    
+	    <!-- Input Name -->
+		<EditText android:id="@+id/inputName"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_margin="5dip"
+		    android:layout_marginBottom="15dip"
+		    android:singleLine="true"/>
+		
+		<!-- Rounds Label -->
+	    <TextView
+			android:id="@+id/asdf"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Rounds"
+	        android:paddingLeft="10dip"
+	        android:paddingRight="10dip"
+	        android:paddingTop="10dip"
+	        android:textSize="17dip" />
+	    
+	    <!-- Input Rounds -->
 	
-	<!-- Description Label -->
-
-    <TextView android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Description"
-        android:paddingLeft="10dip"
-        android:paddingRight="10dip"
-        android:paddingTop="10dip"
-        android:textSize="17dip"/>
-    
-    <!-- Input description -->
-	<EditText android:id="@+id/inputDesc" 
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_margin="5dip"
-	    android:layout_marginBottom="5dip"
-	    android:lines="2"
-	    android:gravity="top"/>
+	    <SeekBar
+	        android:id="@+id/inputRounds"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_margin="5dip"
+		    android:layout_marginBottom="15dip"
+		    android:max="17" />
+		
+		<!-- Description Label -->
 	
-	<!-- Button Create Game -->
-
-	<TextView
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:paddingLeft="10dip"
-	    android:paddingRight="10dip"
-	    android:paddingTop="10dip"
-	    android:text="Local play"
-	    android:textSize="17dip" />
-
-	<ToggleButton
-	    android:id="@+id/button_local_toggle"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_gravity="left"
-	    android:text="Local Toggle"
-	    style="@style/btnStyleArsenic"
-	    android:background="@drawable/custom_btn_arsenic"
-	    android:layout_marginLeft="10dp"
-	    android:layout_marginTop="5dp"
-	    android:layout_marginBottom="5dp" />
-
-	<Button android:id="@+id/btnCreateGame"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:text="Create Game"
-	    style="@style/btnStyleArsenic"
-	    android:background="@drawable/custom_btn_arsenic"
-	    android:layout_marginLeft="10dp"
-	    android:layout_marginRight="10dp"/>
+	    <TextView android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Description"
+	        android:paddingLeft="10dip"
+	        android:paddingRight="10dip"
+	        android:paddingTop="10dip"
+	        android:textSize="17dip"/>
+	    
+	    <!-- Input description -->
+		<EditText android:id="@+id/inputDesc" 
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_margin="5dip"
+		    android:layout_marginBottom="5dip"
+		    android:lines="2"
+		    android:gravity="top"/>
+		
+		<!-- Button Create Game -->
 	
-</LinearLayout>
+		<TextView
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:paddingLeft="10dip"
+		    android:paddingRight="10dip"
+		    android:paddingTop="10dip"
+		    android:text="Local play"
+		    android:textSize="17dip" />
+	
+		<ToggleButton
+		    android:id="@+id/button_local_toggle"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="left"
+		    android:text="Local Toggle"
+		    style="@style/btnStyleArsenic"
+		    android:background="@drawable/custom_btn_arsenic"
+		    android:layout_marginLeft="10dp"
+		    android:layout_marginTop="5dp"
+		    android:layout_marginBottom="5dp" />
+	
+		<Button android:id="@+id/btnCreateGame"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:text="Create Game"
+		    style="@style/btnStyleArsenic"
+		    android:background="@drawable/custom_btn_arsenic"
+		    android:layout_marginLeft="10dp"
+		    android:layout_marginRight="10dp"/>
+		
+	</LinearLayout>
+</ScrollView>

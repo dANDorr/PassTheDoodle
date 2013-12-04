@@ -22,6 +22,6 @@
     <string name="lrg">Large</string>
     <string name="hint_text_response">Guess the doodle!</string>
     <string name="title_activity_text">Describe</string>
-    <string name="title_activity_game">GameActivity</string>
+    <string name="title_activity_vc">Finished</string>
 
 </resources>

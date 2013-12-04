@@ -4,11 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,6 +31,8 @@ public class DrawingView extends View {
     private float brushSize, lastBrushSize;
     //erase flag
     private boolean erase=false;
+    
+    private int canvasWidth, canvasHeight;
 
     public DrawingView(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -56,6 +60,10 @@ public class DrawingView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        
+        canvasWidth = w;
+    	canvasHeight = h;
+        
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
     }
@@ -132,5 +140,29 @@ public class DrawingView extends View {
     
     public void sendPicture(View view) {
         // Do something in response to button
+    }
+    
+    public void setCanvas(Bitmap bm) {
+    	startNew(); // erase current canvas
+    	
+    	double scale_double;
+    	float trans_x = 0;
+    	float trans_y = 0;
+    	int oldHeight = bm.getHeight();
+    	int oldWidth = bm.getWidth();
+    	if (oldHeight > oldWidth) {
+    		scale_double = canvasHeight * 1.0 / oldHeight;
+    		trans_x = (float) (canvasWidth - oldWidth * scale_double) / 2;
+    	}
+    	else {
+    		scale_double = canvasWidth * 1.0 / oldWidth;
+    		trans_y = (float) (canvasHeight - oldHeight * scale_double) / 2;
+    	}
+    	
+    	float scale = (float) scale_double;
+    	Matrix matrix = new Matrix();
+    	matrix.setScale(scale, scale);
+    	matrix.postTranslate(trans_x, trans_y);
+    	drawCanvas.drawBitmap(bm, matrix, null);
     }
 }

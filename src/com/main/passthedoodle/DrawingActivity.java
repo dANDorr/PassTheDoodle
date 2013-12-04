@@ -2,7 +2,9 @@ package com.main.passthedoodle;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -18,6 +20,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,6 +33,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -52,7 +56,12 @@ public class DrawingActivity extends Activity implements OnClickListener {
 	private SubmitDrawingTask mDrawingTask = null;
 	
 	private boolean isLocal;
+	
 	String promptString = "";
+
+	//for image import
+	private static final int SELECT_IMAGE = 187;
+	private boolean usedImport = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +118,27 @@ public class DrawingActivity extends Activity implements OnClickListener {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) { 
+	    super.onActivityResult(requestCode, resultCode, imageReturnedIntent); 
+
+	    switch(requestCode) { 
+	    case SELECT_IMAGE:
+	        if(resultCode == RESULT_OK){  
+	            Uri selectedImageUri = imageReturnedIntent.getData();
+	            InputStream imageStream = null;
+				try {
+					imageStream = getContentResolver().openInputStream(selectedImageUri);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	            Bitmap selectedImageBitmap = BitmapFactory.decodeStream(imageStream);
+	            drawView.setCanvas(selectedImageBitmap);
+	        }
+	    }
 	}
 
 	//user clicked paint
@@ -298,6 +328,24 @@ public class DrawingActivity extends Activity implements OnClickListener {
 			saveDialog.show();
 		}
 		else if(view.getId()==R.id.prompt_btn){
+			AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+			newDialog.setTitle("Import image");
+			newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
+			newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface dialog, int which){
+					usedImport = true;
+					Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+					galleryIntent.setType("image/*");
+					startActivityForResult(galleryIntent, SELECT_IMAGE);
+				}
+			});
+			newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface dialog, int which){
+					dialog.cancel();
+				}
+			});
+			newDialog.show();
+			/*
             //new button
             AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
             newDialog.setTitle("Prompt");
@@ -329,6 +377,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
                 }
             });
             newDialog.show();
+            */
         }
 		else if(view.getId()==R.id.submit_btn){
             //new button
@@ -364,6 +413,10 @@ public class DrawingActivity extends Activity implements OnClickListener {
                         finish();
                     } else {
                     	ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    	if (usedImport)
+                    		passBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+                    	else
+                    		passBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);                    	
                         passBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                         byteArray = stream.toByteArray();
                     	// Submit picture to server

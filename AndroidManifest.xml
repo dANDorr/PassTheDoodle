@@ -74,7 +74,7 @@
         </activity>
         <activity
             android:name="com.main.passthedoodle.ViewCompletedActivity"
-            android:label="@string/title_activity_game"
+            android:label="@string/title_activity_vc"
             android:parentActivityName="com.main.passthedoodle.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" >
@@ -84,18 +84,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.main.passthedoodle.MainActivity" />
         </activity>
-        <activity
-            android:name="com.main.passthedoodle.NewGameFragment"
-            android:label="@string/title_activity_game"
-            android:parentActivityName="com.main.passthedoodle.MainActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" >
 
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.main.passthedoodle.MainActivity" />
-        </activity>
     </application>
 
 </manifest>
