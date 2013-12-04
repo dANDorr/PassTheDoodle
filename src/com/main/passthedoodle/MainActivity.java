@@ -150,6 +150,9 @@ public class MainActivity extends FragmentActivity {
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), ViewCompletedActivity.class);
                     intent.putExtra("option", 2);
+                    
+                    // game_id is set to 100 for now
+                    intent.putExtra("game_id", "100");
                     startActivity(intent);
                 }
             });

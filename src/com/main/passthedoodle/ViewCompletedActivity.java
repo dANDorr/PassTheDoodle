@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -47,38 +48,42 @@ public class ViewCompletedActivity extends FragmentActivity {
         // Size of the list = # of drawings in the game = # fragments
         stringsList = new ArrayList<RoundInfo>();
         
-        //if (getIntent().getIntExtra("option", 0) == 1) {
-        if (getIntent().getBooleanExtra("isLocal", false)) {
-            // TODO: do local stuff
+        if (getIntent().getBooleanExtra("isLocal", false)) { // local
         	LocalPlayHandler lph = LocalPlayHandler.getInstance();
         	stringsList = lph.gameRecord;
         }
-        else {
-        //if (getIntent().getIntExtra("option", 0) == 2) {
+        
+        else if (getIntent().getIntExtra("option", 0) == 0) //sample
+            	buildTest();
+        	
+        else if (getIntent().getIntExtra("option", 0) == 2) { // servers
             // TODO: do non-local stuff
             // - show completed game list from online db (similar to BrowseFragment).
             // - upon selection retrieve images and description of game from online db.
             // - implement it in mViewPager
             
-        	String gameID = getIntent().getStringExtra("GameID");
+            // game_id is set to 100 for now from MainActivity
+            String gameID = getIntent().getStringExtra("game_id");
             /* Implement method to retrieve from db
              * for every drawing of gameID
-               		RoundInfo.imageUrl <- image urls
-               		RoundInfo.prompt <- description for (drawing sequence) - 1
-               		RoundInfo.guess <- description for (drawing sequence) + 1 or
-              			^set as empty string if odd # total rounds and game ends on a drawing
-               		add RoundInfo to stringsList
+                    RoundInfo.imageUrl <- image urls
+                    RoundInfo.prompt <- description for (drawing sequence) - 1
+                    RoundInfo.guess <- description for (drawing sequence) + 1 or
+                        ^set as empty string if odd # total rounds and game ends on a drawing
+                    add RoundInfo to stringsList
              */
-        	if (getIntent().getIntExtra("option", 0) == 0) //sample
-            	buildTest();
         }
         
-        setContentView(R.layout.activity_viewcompleted);
-        mViewCompletedPagerAdapter = new ViewCompletedPagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.completed_pager);
-        mViewPager.setPageTransformer(false, new DepthPageTransformer()); // fancy animation
-        mViewPager.setAdapter(mViewCompletedPagerAdapter);
-        mViewPager.setOffscreenPageLimit(2);
+        if (!stringsList.isEmpty()) {
+            setContentView(R.layout.activity_viewcompleted);
+            mViewCompletedPagerAdapter = new ViewCompletedPagerAdapter(getSupportFragmentManager());
+            mViewPager = (ViewPager) findViewById(R.id.completed_pager);
+            mViewPager.setPageTransformer(false, new DepthPageTransformer()); // fancy animation
+            mViewPager.setAdapter(mViewCompletedPagerAdapter);
+            mViewPager.setOffscreenPageLimit(2);
+        } else {
+            Toast.makeText(this, "Game is empty.", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void buildTest() {
