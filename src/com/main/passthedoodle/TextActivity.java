@@ -136,7 +136,7 @@ public class TextActivity extends Activity {
 	}
 	
 	private String getPromptString() {
-		return "You are guessing ____'s doodle";
+		return "You are guessing the doodle";
 	}
 	
 	private String getImageURL() {

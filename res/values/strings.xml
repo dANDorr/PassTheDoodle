@@ -13,6 +13,8 @@
     <string name="start_new">New</string>
     <string name="brush">Brush</string>
     <string name="erase">Erase</string>
+    <string name="colorpicker">Colors</string>
+    <string name="import_img">Import</string>
     <string name="save">Save</string>
     <string name="paint">Paint</string>
     <string name="prompt">Prompt</string>
@@ -23,5 +25,9 @@
     <string name="hint_text_response">Guess the doodle!</string>
     <string name="title_activity_text">Describe</string>
     <string name="title_activity_vc">Finished</string>
-
+    
+    <string name="hue_view_content_desc">Hue image</string>
+    <string name="hue_cursor_content_desc">Hue image cursor</string>
+    <string name="color_picker_content_desc">Color picker image</string>
+    <string name="arrow_content_desc">Arrow image</string>
 </resources>

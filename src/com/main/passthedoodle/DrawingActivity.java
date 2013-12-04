@@ -20,6 +20,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import yuku.ambilwarna.AmbilWarnaDialogFragment;
+import yuku.ambilwarna.OnAmbilWarnaListener;
+
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,6 +37,9 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -41,9 +47,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class DrawingActivity extends Activity implements OnClickListener {
+public class DrawingActivity extends FragmentActivity implements OnClickListener {
 
 	//custom drawing view
 	private DrawingView drawView;
@@ -63,6 +70,9 @@ public class DrawingActivity extends Activity implements OnClickListener {
 	private static final int SELECT_IMAGE = 187;
 	private boolean usedImport = false;
 	
+	private int pickerColor = Color.BLACK;
+	private TextView promptTextView;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -71,10 +81,12 @@ public class DrawingActivity extends Activity implements OnClickListener {
 		//get drawing view
 		drawView = (DrawingView)findViewById(R.id.drawing);
 
+		/*
 		//get the palette and first color button
 		LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);
 		currPaint = (ImageButton)paintLayout.getChildAt(0);
 		currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
+		*/
 
 		//sizes from dimensions
 		extraSmallBrush = getResources().getInteger(R.integer.extra_small_size);
@@ -90,8 +102,8 @@ public class DrawingActivity extends Activity implements OnClickListener {
 		//set initial size
 		drawView.setBrushSize(mediumBrush);
 
-		//erase button
-		eraseBtn = (ImageButton)findViewById(R.id.erase_btn);
+		//color picker button
+		eraseBtn = (ImageButton)findViewById(R.id.color_btn);
 		eraseBtn.setOnClickListener(this);
 
 		//new button
@@ -102,8 +114,8 @@ public class DrawingActivity extends Activity implements OnClickListener {
 		saveBtn = (ImageButton)findViewById(R.id.save_btn);
 		saveBtn.setOnClickListener(this);
 		
-		//prompt button
-        saveBtn = (ImageButton)findViewById(R.id.prompt_btn);
+		//import image button
+        saveBtn = (ImageButton)findViewById(R.id.import_btn);
         saveBtn.setOnClickListener(this);
         
         //submit button
@@ -111,6 +123,8 @@ public class DrawingActivity extends Activity implements OnClickListener {
         saveBtn.setOnClickListener(this);
         
         isLocal = getIntent().getBooleanExtra("isLocal", false);
+        
+        setPrompt();
 	}
 
 	@Override
@@ -139,25 +153,6 @@ public class DrawingActivity extends Activity implements OnClickListener {
 	            drawView.setCanvas(selectedImageBitmap);
 	        }
 	    }
-	}
-
-	//user clicked paint
-	public void paintClicked(View view){
-		//use chosen color
-
-		//set erase false
-		drawView.setErase(false);
-		drawView.setBrushSize(drawView.getLastBrushSize());
-
-		if(view!=currPaint){
-			ImageButton imgView = (ImageButton)view;
-			String color = view.getTag().toString();
-			drawView.setColor(color);
-			//update ui
-			imgView.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
-			currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint));
-			currPaint=(ImageButton)view;
-		}
 	}
 
 	@Override
@@ -222,58 +217,36 @@ public class DrawingActivity extends Activity implements OnClickListener {
 			//show and wait for user interaction
 			brushDialog.show();
 		}
-		else if(view.getId()==R.id.erase_btn){
-			//switch to erase - choose size
-			final Dialog brushDialog = new Dialog(this);
-			brushDialog.setTitle("Eraser size:");
-			brushDialog.setContentView(R.layout.brush_chooser);
-			//size buttons
-			ImageButton extraSmallBtn = (ImageButton)brushDialog.findViewById(R.id.extra_small_brush);
-			extraSmallBtn.setOnClickListener(new OnClickListener(){
-				@Override
-				public void onClick(View v) {
-					drawView.setErase(true);
-					drawView.setBrushSize(extraSmallBrush);
-					brushDialog.dismiss();
-				}
-			});
-			ImageButton smallBtn = (ImageButton)brushDialog.findViewById(R.id.small_brush);
-			smallBtn.setOnClickListener(new OnClickListener(){
-				@Override
-				public void onClick(View v) {
-					drawView.setErase(true);
-					drawView.setBrushSize(smallBrush);
-					brushDialog.dismiss();
-				}
-			});
-			ImageButton mediumBtn = (ImageButton)brushDialog.findViewById(R.id.medium_brush);
-			mediumBtn.setOnClickListener(new OnClickListener(){
-				@Override
-				public void onClick(View v) {
-					drawView.setErase(true);
-					drawView.setBrushSize(mediumBrush);
-					brushDialog.dismiss();
-				}
-			});
-			ImageButton largeBtn = (ImageButton)brushDialog.findViewById(R.id.large_brush);
-			largeBtn.setOnClickListener(new OnClickListener(){
-				@Override
-				public void onClick(View v) {
-					drawView.setErase(true);
-					drawView.setBrushSize(largeBrush);
-					brushDialog.dismiss();
-				}
-			});
-			ImageButton extraLargeBtn = (ImageButton)brushDialog.findViewById(R.id.extra_large_brush);
-			extraLargeBtn.setOnClickListener(new OnClickListener(){
-				@Override
-				public void onClick(View v) {
-					drawView.setErase(true);
-					drawView.setBrushSize(extraLargeBrush);
-					brushDialog.dismiss();
-				}
-			});
-			brushDialog.show();
+		else if(view.getId()==R.id.color_btn){
+			//use chosen color
+
+			//set erase false
+			drawView.setErase(false);
+			drawView.setBrushSize(drawView.getLastBrushSize());
+			
+			// create OnAmbilWarnaListener instance
+		    // new color can be retrieved in onOk() event
+		    OnAmbilWarnaListener onAmbilWarnaListener = new OnAmbilWarnaListener() {
+		        @Override
+		        public void onCancel(AmbilWarnaDialogFragment dialogFragment) {
+		            Log.d("TAG", "onCancel()");
+		        }
+		        @Override
+		        public void onOk(AmbilWarnaDialogFragment dialogFragment, int color) {
+		            Log.d("COLORZZZZZZZZ", "onOk(). Color: " + color);
+
+		            //MainActivity.this.mColor = color;
+		            pickerColor = color;
+		            drawView.setColor(color);
+		            //drawView.setColor("" + Color.HSVToColor(color));
+		        }
+		    };		    
+		    // create new instance of AmbilWarnaDialogFragment and set OnAmbilWarnaListener listener to it
+		    // show dialog fragment with some tag value
+		    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		    AmbilWarnaDialogFragment fragment = AmbilWarnaDialogFragment.newInstance(pickerColor);
+		    fragment.setOnAmbilWarnaListener(onAmbilWarnaListener);
+		    fragment.show(ft, "color_picker_dialog");
 		}
 		else if(view.getId()==R.id.new_btn){
 			//new button
@@ -282,6 +255,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
 			newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
 			newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int which){
+					usedImport = false;
 					drawView.startNew();
 					dialog.dismiss();
 				}
@@ -327,7 +301,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
 			});
 			saveDialog.show();
 		}
-		else if(view.getId()==R.id.prompt_btn){
+		else if(view.getId()==R.id.import_btn){
 			AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
 			newDialog.setTitle("Import image");
 			newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
@@ -345,39 +319,6 @@ public class DrawingActivity extends Activity implements OnClickListener {
 				}
 			});
 			newDialog.show();
-			/*
-            //new button
-            AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
-            newDialog.setTitle("Prompt");
-
-            if (isLocal) {
-            	LocalPlayHandler lph = LocalPlayHandler.getInstance();
-            	promptString = lph.currentText;
-            }
-            else { // Not local so load prompt from database
-                promptString = this.getIntent().getStringExtra("description");
-                try {
-                    if (promptString.equals(""))
-                        //useless?
-                        promptString = new GetPrompt().execute().get();
-                } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                } catch (ExecutionException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                }
-            }
-
-            newDialog.setMessage(promptString);
-            
-            newDialog.setNeutralButton("OK", new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface dialog, int which){
-                    dialog.dismiss();
-                }
-            });
-            newDialog.show();
-            */
         }
 		else if(view.getId()==R.id.submit_btn){
             //new button
@@ -459,6 +400,31 @@ public class DrawingActivity extends Activity implements OnClickListener {
 		}
 	}
 	
+	
+	private void setPrompt() {
+		promptTextView = (TextView) findViewById(R.id.drawing_activity_prompt_view);
+
+        if (isLocal) {
+        	LocalPlayHandler lph = LocalPlayHandler.getInstance();
+        	promptString = lph.currentText;
+        }
+        else { // Not local so load prompt from database
+            promptString = this.getIntent().getStringExtra("description");
+            try {
+                if (promptString.equals(""))
+                    //useless?
+                    promptString = new GetPrompt().execute().get();
+            } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+            } catch (ExecutionException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+            }
+        }
+        
+        promptTextView.setText("You are doodling: " + promptString + "!");
+	}
 	
 	public class GetPrompt extends AsyncTask<String, Void, String> {
         @Override

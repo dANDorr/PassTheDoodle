@@ -56,8 +56,8 @@
 		        android:background="@drawable/custom_btn_arsenic"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:onClick="goRegister"
-		        android:text="@string/action_guest" 
+		        android:onClick="goRegister" 
+		        android:text="@string/action_register" 
 		        style="@style/btnStyleArsenic" />
 			<!--
 			    <Button

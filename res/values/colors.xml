@@ -16,4 +16,7 @@
     <color name="sysTransparent">#00000000</color>
     <color name="sysWhite">#FFFFFFFF</color>
     <color name="sysYellow">#FFFFFF00</color>
+    
+    <color name="prev_color">#FFAAAA</color>
+    <color name="new_color">#AAAAFF</color>
 </resources>

@@ -108,7 +108,7 @@ public class MainActivity extends FragmentActivity {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), DrawingActivity.class);
-                    intent.putExtra("description", "draw anything");
+                    intent.putExtra("description", "anything");
                     startActivity(intent);
                 }
             });
@@ -141,7 +141,7 @@ public class MainActivity extends FragmentActivity {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), ViewCompletedActivity.class);
-                    intent.putExtra("option", 1);
+                    intent.putExtra("isLocal", true);
                     startActivity(intent);
                 }
             });
