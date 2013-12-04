@@ -9,7 +9,6 @@ import java.util.Scanner;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -98,7 +97,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
         saveBtn = (ImageButton)findViewById(R.id.prompt_btn);
         saveBtn.setOnClickListener(this);
         
-        //save button
+        //submit button
         saveBtn = (ImageButton)findViewById(R.id.submit_btn);
         saveBtn.setOnClickListener(this);
         
@@ -308,8 +307,11 @@ public class DrawingActivity extends Activity implements OnClickListener {
             	promptString = lph.currentText;
             }
             else { // Not local so load prompt from database
+                promptString = this.getIntent().getStringExtra("description");
                 try {
-                	promptString = new GetPrompt().execute().get();
+                    if (promptString.equals(""))
+                        //useless?
+                        promptString = new GetPrompt().execute().get();
                 } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();

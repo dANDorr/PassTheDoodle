@@ -11,8 +11,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -20,7 +18,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -141,6 +138,8 @@ public class NewGameFragment extends Fragment {
 			String description = inputDesc.getText().toString();
 			String output = null;
             int responseCode = 0;
+            
+            Log.d("post", "name:"+name+" rounds:"+rounds+" description:"+description);
 
 			// Building Parameters
 			List<NameValuePair> params = new ArrayList<NameValuePair>();

@@ -2,26 +2,20 @@ package com.main.passthedoodle;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
@@ -34,10 +28,7 @@ import com.nostra13.universalimageloader.utils.StorageUtils;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -127,7 +118,13 @@ public class TextActivity extends Activity {
 		if (getIntent().getBooleanExtra("isLocal", false))
 			imageLoader.displayImage(lph.currentImage, drawingImageView, sill);
 		else {
-			imageLoader.displayImage(getImageURL(), drawingImageView, sill);
+		    String imgURL = "http://passthedoodle.com/i/" + this.getIntent().getStringExtra("filename");
+		    try {
+		        imageLoader.displayImage(imgURL, drawingImageView, sill);
+		    } catch (Exception e) {
+		        //useless?
+		        imageLoader.displayImage(getImageURL(), drawingImageView, sill);
+		    }
 		}
 	}
 	

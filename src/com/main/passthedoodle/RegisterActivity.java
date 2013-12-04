@@ -36,8 +36,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import com.main.passthedoodle.LoginActivity.UserLoginTask;
-
 //Activity which displays a registration screen to the user
 
 public class RegisterActivity extends Activity {
