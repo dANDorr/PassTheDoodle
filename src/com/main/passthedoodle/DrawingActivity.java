@@ -358,7 +358,7 @@ public class DrawingActivity extends FragmentActivity implements OnClickListener
                     		passBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream);
                     	else
                     		passBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);                    	
-                        passBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
                         byteArray = stream.toByteArray();
                     	// Submit picture to server
                         mDrawingTask = new SubmitDrawingTask();

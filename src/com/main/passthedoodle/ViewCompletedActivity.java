@@ -69,11 +69,10 @@ public class ViewCompletedActivity extends FragmentActivity {
               			^set as empty string if odd # total rounds and game ends on a drawing
                		add RoundInfo to stringsList
              */
+        	if (getIntent().getIntExtra("option", 0) == 0) //sample
+            	buildTest();
         }
         
-        if (getIntent().getIntExtra("option", 0) == 0) //sample
-        	buildTest();
-
         setContentView(R.layout.activity_viewcompleted);
         mViewCompletedPagerAdapter = new ViewCompletedPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.completed_pager);
@@ -85,14 +84,10 @@ public class ViewCompletedActivity extends FragmentActivity {
     private void buildTest() {
         stringsList.add(new RoundInfo("http://passthedoodle.com/i/26_1385351398.png", "Turtle", "Frog"));
         stringsList.add(new RoundInfo("http://passthedoodle.com/i/3z1qsrmi.png", "Frog", "Battletoad"));
-        stringsList.add(new RoundInfo("http://i.imgur.com/JpKpG.jpg", "Battletoad", "Cheater"));
-        stringsList.add(new RoundInfo("http://i.imgur.com/OxMEYsj.jpg", "Cheater", "End"));
-        stringsList.add(new RoundInfo("http://i.imgur.com/oMLLDgE.jpg", "blah", "boop"));
-        stringsList.add(new RoundInfo("http://i.imgur.com/dLukzCx.jpg", "blah", "boop"));
-        stringsList.add(new RoundInfo("http://i.imgur.com/Vh8WEd2.jpg", "blah", "boop"));
-        stringsList.add(new RoundInfo("http://i.imgur.com/aFXrucw.jpg", "blah", "boop"));
-        stringsList.add(new RoundInfo("http://i.imgur.com/28Jq75s.jpg", "blah", "boop"));
-        stringsList.add(new RoundInfo("http://i.imgur.com/uUCzB9F.jpg", "blah", "boop"));
+        stringsList.add(new RoundInfo("http://passthedoodle.com/i/l2zcjzwvcd.png", "Battletoad", "Wilson"));
+        stringsList.add(new RoundInfo("http://passthedoodle.com/i/l2z7ym63g7.png", "Wilson", "Heart"));
+        stringsList.add(new RoundInfo("http://passthedoodle.com/i/4qm1aswl.png", "Heart", "Kenny"));
+        stringsList.add(new RoundInfo("http://passthedoodle.com/i/l2zh5dnqxu.png", "Kenny", "The End"));
     }
     
 	public static class ViewCompletedPagerAdapter extends FragmentStatePagerAdapter {
