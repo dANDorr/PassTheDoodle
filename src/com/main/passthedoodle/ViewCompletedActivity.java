@@ -32,27 +32,16 @@ import com.nostra13.universalimageloader.utils.StorageUtils;
 
 public class ViewCompletedActivity extends FragmentActivity {
 	static ArrayList<RoundInfo> stringsList;
+	//ArrayList<RoundInfo> gameList;
+	JSONObject json;
+	JSONArray game;
 	ViewPager mViewPager;
 	ViewCompletedPagerAdapter mViewCompletedPagerAdapter;
 	ImageLoader imageLoader;
 	DisplayImageOptions options;
 	
-	// Progress Dialog
-    private ProgressDialog pDialog;
-    // Creating JSON Parser object
-    JSONParser jParser = new JSONParser();
-    //ArrayList<HashMap<String, String>> gamesList;
     // url to get all games list
     private static String url_list_games = "http://passthedoodle.com/test/get_comp_game.php";
-    // JSON Node names
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_GAME = "game";
-    //private static final String TAG_USERNAME = "username";
-    //private static final String TAG_SEQ = "sequence";
-    private static final String TAG_DESC = "description";
-    private static final String TAG_FILENAME = "filename";
-    // games JSONArray
-    JSONArray game = null;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,27 +80,17 @@ public class ViewCompletedActivity extends FragmentActivity {
             // - upon selection retrieve images and description of game from online db.
             // - implement it in mViewPager
             
-            // game_id is set to 100 for now from MainActivity
+            // 'game_id' is set to 100 for now from MainActivity
             String game_id = getIntent().getStringExtra("game_id");
-            new LoadCompGame().execute(game_id);
-            // looping through All Games
-            int gameLength = game.length();
-            for (int i = 0; i < gameLength-1; i+=2) {
-                String url;
-                String prompt;
-                String desc;
-                try {
-                    url = "http://passthedoodle.com/i/" + game.getJSONObject(i+1).getString(TAG_DESC);
-                    prompt = game.getJSONObject(i).getString(TAG_FILENAME);
-                    desc = game.getJSONObject(i+2).getString(TAG_DESC);
-                    if (i <= gameLength-1)
-                        stringsList.add(new RoundInfo(url, prompt, desc));
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                
+            LoadCompGame loadCompGame = new LoadCompGame();
+            loadCompGame.execute(game_id);
+            
+            try {
+            Log.d("stringsList size again?",Integer.toString(stringsList.size()));
+            } catch (NullPointerException e) {
+                e.printStackTrace();
             }
+            
             /* Implement method to retrieve from db
              * for every drawing of gameID
                     RoundInfo.imageUrl <- image urls
@@ -213,18 +192,40 @@ public class ViewCompletedActivity extends FragmentActivity {
 	        params.add(new BasicNameValuePair("PHPSESSID", session));
 	        params.add(new BasicNameValuePair("game_id", getIntent().getStringExtra("game_id")));
 	        // getting JSON string from URL
-	        JSONObject json = jParser.makeHttpRequest(url_list_games, "POST", params);
+	        json = new JSONParser().makeHttpRequest(url_list_games, "POST", params);
 	        // Check your log cat for JSON response
-	        Log.d("All Games: ", json.toString());
+	        Log.d("Game: ", json.toString());
 	        
 	        try {
 	            // Checking for SUCCESS TAG
-	            int success = json.getInt(TAG_SUCCESS);
+	            int success = json.getInt("success");
 
 	            if (success == 1) {
 	                // games found
 	                // Getting Array of Games
-	                game = json.getJSONArray(TAG_GAME);
+	                game = json.getJSONArray("game");
+	                //gameList = new ArrayList<RoundInfo>();
+	                // looping through All Games
+/*	                int gameLength = game.length();
+	                String url;
+                    String prompt;
+                    String desc;
+	                for (int i = 0; i < gameLength-1; i+=2) {
+	                    try {
+	                        url = "http://passthedoodle.com/i/" + game.getJSONObject(i+1).getString("filename");
+	                        prompt = game.getJSONObject(i).getString("description");
+	                        if (i < gameLength-2) desc = game.getJSONObject(i+2).getString("description");
+	                        else desc = "";
+	                        Log.d("values", "#"+i+" url:"+url+" prompt:"+prompt+" desc"+desc);
+	                        gameList.add(new RoundInfo(url, prompt, desc));
+	                    } catch (JSONException e) {
+	                        // TODO Auto-generated catch block
+	                        e.printStackTrace();
+	                    }
+	                }
+*/	                
+	                Log.d("StringsList size?",Integer.toString(stringsList.size()));
+	                
 	            } else if (success == 0) {
 	                return "0";
 	            } else if (success == 2) {
@@ -233,50 +234,53 @@ public class ViewCompletedActivity extends FragmentActivity {
 	        } catch (JSONException e) {
 	            e.printStackTrace();
 	            System.out.print("JSON Exception occurred");
-	            Toast.makeText(getApplicationContext(), "JSON Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
+	            //Toast.makeText(getApplicationContext(), "JSON Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
 	        } catch (NullPointerException n) {
 	            n.printStackTrace();
 	            System.out.print("Null Pointer Exception occurred");
-	            Toast.makeText(getApplicationContext(), "Null Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
+	            //Toast.makeText(getApplicationContext(), "Null Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
 	        } catch (RuntimeException r) {
 	            r.printStackTrace();
 	            System.out.print("Runtime Exception occurred");
-	            Toast.makeText(getApplicationContext(), "Runtime Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
+	            //Toast.makeText(getApplicationContext(), "Runtime Error occurred. Try logging in again.", Toast.LENGTH_LONG).show();
 	        }
-	        return null;
+	        return "1";
 	    }
 
 	    /**
 	     * After completing background task Dismiss the progress dialog
 	     * **/
-	    protected void onPostExecute(String file_url) {
-	        // dismiss the dialog after getting all games
-	        pDialog.dismiss();
+	    protected void onPostExecute(String message) {
 	        // updating UI from Background Thread
-	        if (file_url != null) {
-	            if (file_url.equals("0")) {
-	                Toast.makeText(getApplicationContext(), "Game not found.", Toast.LENGTH_LONG).show();
-	            } else {
-	                Toast.makeText(getApplicationContext(), "Log in or register please.", Toast.LENGTH_LONG).show();
-	                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-	                // Closing all previous activities
-	                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	                startActivity(i);
+	        if (message.equals("1")) {
+	            int gameLength = game.length();
+	            String url;
+	            String prompt;
+	            String desc;
+	            //gameList = new ArrayList<RoundInfo>();
+	            for (int i = 0; i < gameLength-1; i+=2) {
+	                try {
+	                    url = "http://passthedoodle.com/i/" + game.getJSONObject(i+1).getString("filename");
+	                    prompt = game.getJSONObject(i).getString("description");
+	                    if (i < gameLength-2) desc = game.getJSONObject(i+2).getString("description");
+	                    else desc = "";
+	                    Log.d("values", "#"+i+" url:"+url+" prompt:"+prompt+" desc"+desc);
+	                    stringsList.add(new RoundInfo(url, prompt, desc));
+	                } catch (JSONException e) {
+	                    // TODO Auto-generated catch block
+	                    e.printStackTrace();
+	                }
 	            }
 	        }
-	        //((Activity) getApplicationContext()).runOnUiThread(new Runnable() {
-	        //    public void run() {
-	                /**
-	                 * Updating parsed JSON data into ListView
-	                 * */
-/*	                ListAdapter adapter = new SimpleAdapter(
-	                        getApplicationContext(), gamesList,
-	                        R.layout.item_layout, new String[] { TAG_ID, TAG_NAME, TAG_FILENAME, TAG_DESC, TAG_ICON },
-	                        new int[] { R.id.id, R.id.name, R.id.filename, R.id.description, R.id.icon });
-	                // updating listview
-	                setListAdapter(adapter);
-	            }
-	        });*/
+	        else if (message.equals("0")) {
+                Toast.makeText(getApplicationContext(), "Game not found.", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Log in or register please.", Toast.LENGTH_LONG).show();
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                // Closing all previous activities
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+	        }
 	    }
 	}
 
