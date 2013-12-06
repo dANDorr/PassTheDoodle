@@ -44,6 +44,7 @@ public class LocalPlayHandler {
     	// size of list should be half of the total rounds if total rounds is even
     	// or rounded up if odd
     	for (int i = 0; i < (int) Math.ceil(totalRounds / 2.0); i++)
+    		// 4th parameter username always remains empty for local
     		gameRecord.add(new RoundInfo("", "", ""));
     }
     public void endDrawing(String imagePath) {

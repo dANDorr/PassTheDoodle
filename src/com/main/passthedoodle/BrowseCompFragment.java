@@ -162,7 +162,7 @@ import android.widget.Toast;
                 // getting JSON string from URL
                 JSONObject json = jParser.makeHttpRequest(url_list_games, "POST", params);
                 // Check your log cat for JSON response
-                Log.d("All Games: ", json.toString());
+                Log.d("All Comp Games: ", json.toString());
                 
                 try {
                     // Checking for SUCCESS TAG

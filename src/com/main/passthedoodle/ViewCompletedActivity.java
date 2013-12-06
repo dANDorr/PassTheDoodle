@@ -69,10 +69,13 @@ public class ViewCompletedActivity extends FragmentActivity {
         if (getIntent().getBooleanExtra("isLocal", false)) { // local
         	LocalPlayHandler lph = LocalPlayHandler.getInstance();
         	stringsList = lph.gameRecord;
+        	drawElements();
         }
         
-        else if (getIntent().getIntExtra("option", 0) == 0) //sample
+        else if (getIntent().getIntExtra("option", 0) == 0) { //sample
             	buildTest();
+            	drawElements();
+        }
         	
         else if (getIntent().getIntExtra("option", 0) == 2) { // servers
             // TODO: do non-local stuff
@@ -82,14 +85,7 @@ public class ViewCompletedActivity extends FragmentActivity {
             
             // 'game_id' is set to 100 for now from MainActivity
             String game_id = getIntent().getStringExtra("game_id");
-            LoadCompGame loadCompGame = new LoadCompGame();
-            loadCompGame.execute(game_id);
-            
-            try {
-            Log.d("stringsList size again?",Integer.toString(stringsList.size()));
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
+            new LoadCompGame().execute(game_id);
             
             /* Implement method to retrieve from db
              * for every drawing of gameID
@@ -100,17 +96,15 @@ public class ViewCompletedActivity extends FragmentActivity {
                     add RoundInfo to stringsList
              */
         }
-        
-        if (!stringsList.isEmpty()) {
-            setContentView(R.layout.activity_viewcompleted);
-            mViewCompletedPagerAdapter = new ViewCompletedPagerAdapter(getSupportFragmentManager());
-            mViewPager = (ViewPager) findViewById(R.id.completed_pager);
-            mViewPager.setPageTransformer(false, new DepthPageTransformer()); // fancy animation
-            mViewPager.setAdapter(mViewCompletedPagerAdapter);
-            mViewPager.setOffscreenPageLimit(2);
-        } else {
-            Toast.makeText(this, "Game is empty.", Toast.LENGTH_LONG).show();
-        }
+    }
+    
+    private void drawElements() {
+    	setContentView(R.layout.activity_viewcompleted);
+        mViewCompletedPagerAdapter = new ViewCompletedPagerAdapter(getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.completed_pager);
+        mViewPager.setPageTransformer(false, new DepthPageTransformer()); // fancy animation
+        mViewPager.setAdapter(mViewCompletedPagerAdapter);
+        mViewPager.setOffscreenPageLimit(2);
     }
 
     private void buildTest() {
@@ -139,6 +133,8 @@ public class ViewCompletedActivity extends FragmentActivity {
             args.putString("URL", stringsList.get(i).imageUrl);
             args.putString("Prompt", stringsList.get(i).prompt);
             args.putString("Description", stringsList.get(i).desc);
+            args.putString("Drawer", stringsList.get(i).user_drawer);
+            args.putString("Guesser", stringsList.get(i).user_guesser);
             frag.setArguments(args);
 
             return frag;
@@ -171,10 +167,11 @@ public class ViewCompletedActivity extends FragmentActivity {
 	    /**
 	     * Before starting background thread Show Progress Dialog
 	     * */
+		ProgressDialog pDialog;
 	    @Override
 	    protected void onPreExecute() {
 	        super.onPreExecute();
-	        ProgressDialog pDialog = new ProgressDialog(getApplicationContext());
+	        pDialog = new ProgressDialog(ViewCompletedActivity.this);
 	        pDialog.setMessage("Loading games. Please wait...");
 	        pDialog.setIndeterminate(false);
 	        pDialog.setCancelable(false);
@@ -206,24 +203,33 @@ public class ViewCompletedActivity extends FragmentActivity {
 	                game = json.getJSONArray("game");
 	                //gameList = new ArrayList<RoundInfo>();
 	                // looping through All Games
-/*	                int gameLength = game.length();
+	                int gameLength = game.length();
 	                String url;
                     String prompt;
                     String desc;
+                    String drawer;
+                    String guesser;
 	                for (int i = 0; i < gameLength-1; i+=2) {
 	                    try {
 	                        url = "http://passthedoodle.com/i/" + game.getJSONObject(i+1).getString("filename");
 	                        prompt = game.getJSONObject(i).getString("description");
-	                        if (i < gameLength-2) desc = game.getJSONObject(i+2).getString("description");
-	                        else desc = "";
-	                        Log.d("values", "#"+i+" url:"+url+" prompt:"+prompt+" desc"+desc);
-	                        gameList.add(new RoundInfo(url, prompt, desc));
+	                        drawer = game.getJSONObject(i).getString("username");
+	                        if (i < gameLength-2) {
+	                        	desc = game.getJSONObject(i+2).getString("description");
+	                        	guesser = game.getJSONObject(i+2).getString("username");
+	                        }
+	                        else {
+	                        	desc = "";
+	                        	guesser = "";
+	                        }
+	                        Log.d("values", "#"+i+" url:"+url+" prompt:"+prompt+" desc"+desc +" drawer: "+drawer + "guesser: "+guesser);
+	                        stringsList.add(new RoundInfo(url, prompt, desc, drawer, guesser));
 	                    } catch (JSONException e) {
 	                        // TODO Auto-generated catch block
 	                        e.printStackTrace();
 	                    }
 	                }
-*/	                
+	                
 	                Log.d("StringsList size?",Integer.toString(stringsList.size()));
 	                
 	            } else if (success == 0) {
@@ -252,7 +258,9 @@ public class ViewCompletedActivity extends FragmentActivity {
 	     * **/
 	    protected void onPostExecute(String message) {
 	        // updating UI from Background Thread
+	    	
 	        if (message.equals("1")) {
+	        	/*
 	            int gameLength = game.length();
 	            String url;
 	            String prompt;
@@ -264,19 +272,32 @@ public class ViewCompletedActivity extends FragmentActivity {
 	                    prompt = game.getJSONObject(i).getString("description");
 	                    if (i < gameLength-2) desc = game.getJSONObject(i+2).getString("description");
 	                    else desc = "";
+	                    Log.d("POSTEX", "postex");
 	                    Log.d("values", "#"+i+" url:"+url+" prompt:"+prompt+" desc"+desc);
 	                    stringsList.add(new RoundInfo(url, prompt, desc));
 	                } catch (JSONException e) {
 	                    // TODO Auto-generated catch block
 	                    e.printStackTrace();
 	                }
-	            }
+	            } */
+	            try {
+	                Log.d("stringsList size again?",Integer.toString(stringsList.size()));
+	                } catch (NullPointerException e) {
+	                    e.printStackTrace();
+	                }
+	            pDialog.dismiss();
+	            
+	            if (!stringsList.isEmpty()) {
+	            	drawElements();
+	            } else {
+	                Toast.makeText(ViewCompletedActivity.this, "Game is empty.", Toast.LENGTH_LONG).show();
+	            }	            
 	        }
 	        else if (message.equals("0")) {
-                Toast.makeText(getApplicationContext(), "Game not found.", Toast.LENGTH_LONG).show();
+                Toast.makeText(ViewCompletedActivity.this, "Game not found.", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(getApplicationContext(), "Log in or register please.", Toast.LENGTH_LONG).show();
-                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                Toast.makeText(ViewCompletedActivity.this, "Log in or register please.", Toast.LENGTH_LONG).show();
+                Intent i = new Intent(ViewCompletedActivity.this, LoginActivity.class);
                 // Closing all previous activities
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);

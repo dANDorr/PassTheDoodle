@@ -31,12 +31,12 @@ public class ViewCompletedFragment extends Fragment {
 
 		args = getArguments();
 		if (!args.getString("Prompt").equals(""))
-			top.setText("Doodled: " +  args.getString("Prompt"));
+			top.setText(args.getString("Drawer") + " doodled: " +  args.getString("Prompt"));
 		else
 			top.setText("");		
 		// Description is empty if game ended on a drawing so bottom text is blank
 		if (!args.getString("Description").equals(""))
-			bottom.setText("Guessed: " +  args.getString("Description"));
+			bottom.setText(args.getString("Guesser") + " guessed: " +  args.getString("Description"));
 		else
 			bottom.setText("");
 		
