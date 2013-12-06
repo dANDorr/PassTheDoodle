@@ -25,6 +25,8 @@
     <string name="hint_text_response">Guess the doodle!</string>
     <string name="title_activity_text">Describe</string>
     <string name="title_activity_vc">Finished</string>
+    <string name="action_change_email_short">Change email</string>
+    <string name="email_status_changing">Changing email&#8230;</string>
     
     <string name="hue_view_content_desc">Hue image</string>
     <string name="hue_cursor_content_desc">Hue image cursor</string>

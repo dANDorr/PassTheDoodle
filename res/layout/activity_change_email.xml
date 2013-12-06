@@ -1,0 +1,97 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context=".ChangeEmailActivity" >
+    
+    <LinearLayout
+        android:id="@+id/change_email_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone" > 
+        
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp" />
+        
+        <TextView
+            android:id="@+id/change_email_status_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/email_status_changing"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+        
+        <!-- Email change form -->
+    
+    <ScrollView
+        android:id="@+id/change_email_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            style="@style/LoginFormContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+    
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_change_email_short"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="25sp" />
+            
+            <EditText
+                android:id="@+id/change_email_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_new_username"
+                android:maxLines="1"
+                android:singleLine="true" />
+            
+            <EditText
+                android:id="@+id/change_email_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_password"
+                android:imeActionId="@+id/register"
+                android:imeActionLabel="@string/action_change_email_short"
+                android:imeOptions="actionUnspecified"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:singleLine="true" />
+            
+            <EditText
+                android:id="@+id/new_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_email"
+                android:imeActionLabel="@string/action_change_email_short"
+                android:inputType="textNoSuggestions"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+
+            <Button
+                android:id="@+id/change_email_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginTop="16dp"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
+                android:text="@string/action_change_email_short"
+                style="@style/btnStyleArsenic"
+        		android:background="@drawable/custom_btn_arsenic" />
+            
+		</LinearLayout>
+	</ScrollView>  
+</merge>

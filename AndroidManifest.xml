@@ -31,7 +31,8 @@
             android:name="com.main.passthedoodle.LoginActivity"
             android:label="@string/title_activity_login"
             android:parentActivityName="com.main.passthedoodle.MainActivity"
-            android:windowSoftInputMode="adjustResize|stateVisible" >
+            android:windowSoftInputMode="adjustResize|stateVisible"
+            android:theme="@android:style/Theme.Dialog" >
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -43,7 +44,8 @@
             android:name="com.main.passthedoodle.RegisterActivity"
             android:label="@string/title_activity_register"
             android:parentActivityName="com.main.passthedoodle.MainActivity"
-            android:windowSoftInputMode="adjustResize|stateVisible" >
+            android:windowSoftInputMode="adjustResize|stateVisible"
+            android:theme="@android:style/Theme.Dialog" >
         <!-- Parent activity meta-data to support 4.0 and lower -->
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
@@ -85,7 +87,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.main.passthedoodle.MainActivity" />
         </activity>
-
+        <activity
+            android:name="com.main.passthedoodle.ChangeEmailActivity"
+            android:label="title_activity_change_email"
+            android:parentActivityName="com.main.passthedoodle.MainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" >
+            
+        </activity>
     </application>
 
 </manifest>
