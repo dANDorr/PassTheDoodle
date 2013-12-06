@@ -55,13 +55,15 @@ public class MainActivity extends FragmentActivity {
                 	return new BrowseFragment();
                 case 3:
                 	return new TempFragment();
+                case 4:
+                    return new BrowseCompFragment();
                 default:
                     return new TempFragment();
             }
         }
         @Override
         public int getCount() { // the number of tabs
-            return 4;
+            return 5;
         }
         @Override
         public CharSequence getPageTitle(int position) {
@@ -73,6 +75,8 @@ public class MainActivity extends FragmentActivity {
         		return "Browse";
         	else if (position == 3)
         		return "Temp";
+        	else if (position == 4)
+                return "Browse Completed";
         	else
         		return "gtfo";
         }
@@ -153,6 +157,18 @@ public class MainActivity extends FragmentActivity {
                     
                     // game_id is set to 100 for now
                     intent.putExtra("game_id", "100");
+                    startActivity(intent);
+                }
+            });
+			
+			rootView.findViewById(R.id.button_comp_games_list).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), CompletedGamesActivity.class);
+                    //intent.putExtra("option", 2);
+                    
+                    // game_id is set to 100 for now
+                    //intent.putExtra("game_id", "100");
                     startActivity(intent);
                 }
             });

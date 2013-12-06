@@ -84,4 +84,12 @@
         android:onClick="goPaint"
         android:text="Let&apos;s Paint!" />
 
+    <Button
+        android:id="@+id/button_comp_games_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="comp games list" />
+
 </RelativeLayout>
