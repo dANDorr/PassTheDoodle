@@ -213,7 +213,7 @@ public class ViewCompletedActivity extends FragmentActivity {
 	                    try {
 	                        url = "http://passthedoodle.com/i/" + game.getJSONObject(i+1).getString("filename");
 	                        prompt = game.getJSONObject(i).getString("description");
-	                        drawer = game.getJSONObject(i).getString("username");
+	                        drawer = game.getJSONObject(i+1).getString("username");
 	                        if (i < gameLength-2) {
 	                        	desc = game.getJSONObject(i+2).getString("description");
 	                        	guesser = game.getJSONObject(i+2).getString("username");
