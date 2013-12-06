@@ -1,0 +1,7 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_report"
+        android:showAsAction="never"
+        android:title="@string/action_report_short"/>
+</menu>
+

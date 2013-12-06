@@ -29,7 +29,7 @@
     <string name="email_status_changing">Changing email&#8230;</string>
     <string name="action_help">How to play</string>
     <string name="action_log_out_short">Log out</string>
-    
+    <string name="action_report_short">Report</string>
     <string name="hue_view_content_desc">Hue image</string>
     <string name="hue_cursor_content_desc">Hue image cursor</string>
     <string name="color_picker_content_desc">Color picker image</string>

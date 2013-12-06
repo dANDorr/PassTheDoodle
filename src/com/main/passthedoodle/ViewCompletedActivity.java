@@ -1,10 +1,18 @@
 package com.main.passthedoodle;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +29,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -97,7 +107,22 @@ public class ViewCompletedActivity extends FragmentActivity {
              */
         }
     }
-    
+
+    @Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.activity_menu, menu);
+		return true;
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getItemId()==R.id.action_report)
+		{
+			ReportTask rTask = new ReportTask();
+			rTask.execute(getIntent().getStringExtra("id"), getIntent().getStringExtra("cur_sequence"));
+		}
+		return true;
+	}
     private void drawElements() {
     	setContentView(R.layout.activity_viewcompleted);
         mViewCompletedPagerAdapter = new ViewCompletedPagerAdapter(getSupportFragmentManager());
@@ -304,7 +329,69 @@ public class ViewCompletedActivity extends FragmentActivity {
 	        }
 	    }
 	}
+	public class ReportTask extends AsyncTask<String, String, Integer>{
 
+    	@Override
+    	protected Integer doInBackground(String... arg0) {
+    		HttpClient httpClient = new DefaultHttpClient();
+    		HttpPost httpPost = new HttpPost("http://passthedoodle.com/test/report.php");
+    		
+    		SharedPreferences pref = getApplicationContext().getSharedPreferences("ptd", 0);
+        	String session = pref.getString("session", "0");
+    		
+    		BasicNameValuePair gameBasicNameValuePair = new BasicNameValuePair("game", arg0[0]);
+    		BasicNameValuePair sequenceBasicNameValuePair = new BasicNameValuePair("sequence", arg0[1]);
+    		
+    		List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
+    		nameValuePairList.add(new BasicNameValuePair("PHPSESSID", session));
+    		nameValuePairList.add(gameBasicNameValuePair);
+    		nameValuePairList.add(sequenceBasicNameValuePair);
+    		
+    		int responseCode = 0;
+    		
+    		try {
+            	// TODO: secure this or you're fired (https and cert)
+                UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nameValuePairList);
+                httpPost.setEntity(urlEncodedFormEntity);
+                
+                // send POST data
+                HttpResponse response = httpClient.execute(httpPost);
+                responseCode = response.getStatusLine().getStatusCode();
+                
+            } catch (UnsupportedEncodingException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		} catch (ClientProtocolException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		} catch (IOException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+            
+            Log.d("Report", "statusCode: " + responseCode);
+    		return responseCode;
+    	}
+    	
+    	@Override
+    	protected void onPostExecute(Integer headerCode) {
+    		if(headerCode == 401)
+    		{
+    			Toast.makeText(getApplicationContext(), "You must log in to report", Toast.LENGTH_LONG).show();
+    		}else if(headerCode == 200)
+    		{
+    			Toast.makeText(getApplicationContext(), "Reported", Toast.LENGTH_LONG).show();
+    		}
+    		else if(headerCode == 403)
+    		{
+    			Toast.makeText(getApplicationContext(), "Your account is banned and cannot report", Toast.LENGTH_LONG).show();
+    		} else if (headerCode >= 500 && headerCode <= 600) { //Server problem (better fix it!)
+                Toast.makeText(getApplicationContext(), "Server error" + String.valueOf(headerCode), Toast.LENGTH_LONG).show();            
+            } else { //Some other code (likely broken)
+            	Toast.makeText(getApplicationContext(), "Unknown error " + String.valueOf(headerCode), Toast.LENGTH_LONG).show();
+            }
+    	}
+	}
 }
 
 class DepthPageTransformer implements ViewPager.PageTransformer {

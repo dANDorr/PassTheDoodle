@@ -1,6 +1,7 @@
 package com.main.passthedoodle;
 
 import android.os.Bundle;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageView;
 
 public class MainActivity extends FragmentActivity {
     
@@ -80,7 +84,7 @@ public class MainActivity extends FragmentActivity {
         	else if (position == 4)
         	    return "Temp";
         	else
-        		return "gtfo";
+        		return "Error";
         }
     }
 
@@ -107,22 +111,30 @@ public class MainActivity extends FragmentActivity {
     		rootView.findViewById(R.id.button_guest).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getActivity(), RegisterActivity.class);
-                    startActivity(intent);
+                	final Dialog dialog = new Dialog(getActivity());
+                	dialog.setContentView(R.layout.help_dialog);
+                	dialog.setCancelable(true);
+                	dialog.setTitle("How to play");
+                	dialog.setCanceledOnTouchOutside(true);
+                	ImageView image = (ImageView) dialog.findViewById(R.id.help_image);
+                	image.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                          dialog.dismiss();
+                        }
+                      });  
+                	/*Button close = (Button) dialog.findViewById(R.id.close_help_button);
+                	close.setOnClickListener(new OnClickListener() {
+                		public void onClick(View view)
+                		{
+                			
+                		}
+                	});*/
+                	dialog.show();
                 }
             });
     		return rootView;
     	}
-    	/* @Override
-    	 public void onActivityCreated(Bundle savedInstanceState) {
-    		 super.onActivityCreated(savedInstanceState);
-    		 SharedPreferences pref = getActivity().getSharedPreferences("ptd",0);
-     		if(pref.contains("session"))
-     		{
-     			getActivity().findViewById(R.id.button_login).setVisibility(View.GONE);
-     			getActivity().findViewById(R.id.button_logout).setVisibility(View.VISIBLE);
-     		}
-    	 }*/
     	 @Override
     	 public void onResume() {
     		 SharedPreferences pref = getActivity().getSharedPreferences("ptd",0);
