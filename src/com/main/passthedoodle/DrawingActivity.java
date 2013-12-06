@@ -29,6 +29,7 @@ import yuku.ambilwarna.OnAmbilWarnaListener;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -72,6 +73,8 @@ public class DrawingActivity extends FragmentActivity implements OnClickListener
 
 	//for image import
 	private static final int SELECT_IMAGE = 187;
+	private static final int CAMERA_REQUEST = 666;
+	private Uri cameraUri;
 	private boolean usedImport = false;
 	
 	private int pickerColor = Color.BLACK;
@@ -153,7 +156,7 @@ public class DrawingActivity extends FragmentActivity implements OnClickListener
 
 	    switch(requestCode) { 
 	    case SELECT_IMAGE:
-	        if(resultCode == RESULT_OK){  
+	        if(resultCode == RESULT_OK){
 	            Uri selectedImageUri = imageReturnedIntent.getData();
 	            InputStream imageStream = null;
 				try {
@@ -164,6 +167,36 @@ public class DrawingActivity extends FragmentActivity implements OnClickListener
 				}
 	            Bitmap selectedImageBitmap = BitmapFactory.decodeStream(imageStream);
 	            drawView.setCanvas(selectedImageBitmap);
+	        }
+		case CAMERA_REQUEST:
+	    	if (resultCode == RESULT_OK) {
+	    		Uri imageUri = null;
+	    		Bitmap photoBitmap;
+	    		if (imageReturnedIntent != null) {
+	    			if (imageReturnedIntent.hasExtra("data")) {
+	    				photoBitmap = imageReturnedIntent.getParcelableExtra("data");
+	    				drawView.setCanvas(photoBitmap);
+	    			}
+	    		}
+	    		else {
+	    			//TODO do something with the image saved in specficied folder
+	    			try {
+						photoBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), cameraUri);
+						drawView.setCanvas(photoBitmap);
+						//getContentResolver().delete(cameraUri, null, null);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+	    	}
+	    	else {
+	    			//(resultCode == RESULT_CANCELED) //
+	            Toast.makeText(getApplicationContext(), "Cancelled",
+	                    Toast.LENGTH_SHORT).show();
 	        }
 	    }
 	}
@@ -318,8 +351,8 @@ public class DrawingActivity extends FragmentActivity implements OnClickListener
 		else if(view.getId()==R.id.import_btn){
 			AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
 			newDialog.setTitle("Import image");
-			newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
-			newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+			newDialog.setMessage("Select your source (you will lose the current drawing)");
+			newDialog.setPositiveButton("Gallery", new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int which){
 					usedImport = true;
 					Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -330,6 +363,17 @@ public class DrawingActivity extends FragmentActivity implements OnClickListener
 			newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int which){
 					dialog.cancel();
+				}
+			});
+			newDialog.setNeutralButton("Camera", new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface dialog, int which){
+					usedImport = true;
+					Intent cameraIntent =
+								new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+					File out = new File(Environment.getExternalStorageDirectory(), "ptd_cam.jpg");
+					cameraUri = Uri.fromFile(out);
+					cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri);               
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
 				}
 			});
 			newDialog.show();
