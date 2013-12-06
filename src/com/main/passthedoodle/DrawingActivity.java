@@ -496,6 +496,7 @@ public class DrawingActivity extends FragmentActivity implements OnClickListener
                 // TODO: Alter this to send user to the game menu
                 Toast.makeText(getApplicationContext(), "Drawing submitted!", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("Tab", 2);
                 startActivity(intent);
                 finish();

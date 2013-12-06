@@ -30,22 +30,10 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/button_paint"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="14dp"
         android:background="@drawable/custom_btn_arsenic"
         android:onClick="goWrite"
         android:text="Let&apos;s Guess!" />
-
-    <Button
-        android:id="@+id/button_comp"
-        style="@style/btnStyleArsenic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/button_local_play"
-        android:layout_marginTop="28dp"
-        android:background="@drawable/custom_btn_arsenic"
-        android:text="View Completed Sample" />
 
     <Button
         android:id="@+id/button_comp_local"
@@ -57,7 +45,7 @@
         android:layout_below="@+id/button_comp"
         android:layout_marginTop="14dp"
         android:background="@drawable/custom_btn_arsenic"
-        android:text="View Complete Local" />
+        android:text="Local" />
 
     <Button
         android:id="@+id/button_paint"
@@ -66,10 +54,41 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="75dp"
+        android:layout_below="@+id/textView_justplay"
+        android:layout_marginTop="14dp"
         android:background="@drawable/custom_btn_arsenic"
         android:onClick="goPaint"
         android:text="Let&apos;s Paint!" />
+
+    <TextView
+        android:id="@+id/textView_justplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="Just Play:"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/button_comp"
+        style="@style/btnStyleArsenic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textView_compgame"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/custom_btn_arsenic"
+        android:text="Sample" />
+
+    <TextView
+        android:id="@+id/textView_compgame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/button_local_play"
+        android:layout_marginTop="26dp"
+        android:text="View Completed Games:"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>
