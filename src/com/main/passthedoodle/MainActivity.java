@@ -54,9 +54,9 @@ public class MainActivity extends FragmentActivity {
                 case 2:
                 	return new BrowseFragment();
                 case 3:
-                	return new TempFragment();
-                case 4:
                     return new BrowseCompFragment();
+                case 4:
+                    return new TempFragment();
                 default:
                     return new TempFragment();
             }
@@ -74,9 +74,9 @@ public class MainActivity extends FragmentActivity {
         	else if (position == getResources().getInteger(R.integer.browse_tab))
         		return "Browse";
         	else if (position == 3)
-        		return "Temp";
+        	    return "Browse Completed";
         	else if (position == 4)
-                return "Browse Completed";
+        	    return "Temp";
         	else
         		return "gtfo";
         }
@@ -146,29 +146,6 @@ public class MainActivity extends FragmentActivity {
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), ViewCompletedActivity.class);
                     intent.putExtra("isLocal", true);
-                    startActivity(intent);
-                }
-            });
-			rootView.findViewById(R.id.button_comp_db).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(getActivity(), ViewCompletedActivity.class);
-                    intent.putExtra("option", 2);
-                    
-                    // game_id is set to 100 for now
-                    intent.putExtra("game_id", "100");
-                    startActivity(intent);
-                }
-            });
-			
-			rootView.findViewById(R.id.button_comp_games_list).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(getActivity(), CompletedGamesActivity.class);
-                    //intent.putExtra("option", 2);
-                    
-                    // game_id is set to 100 for now
-                    //intent.putExtra("game_id", "100");
                     startActivity(intent);
                 }
             });
