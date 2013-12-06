@@ -61,15 +61,16 @@ public class MainActivity extends FragmentActivity {
                 	return new BrowseFragment();
                 case 3:
                     return new BrowseCompFragment();
-                case 4:
-                    return new TempFragment();
+//                case 4:
+//                    return new TempFragment();
                 default:
-                    return new TempFragment();
+//                    return new TempFragment();
+                	return new HomeFragment();
             }
         }
         @Override
         public int getCount() { // the number of tabs
-            return 5;
+            return 4;
         }
         @Override
         public CharSequence getPageTitle(int position) {
@@ -81,8 +82,8 @@ public class MainActivity extends FragmentActivity {
         		return "Browse";
         	else if (position == 3)
         	    return "Browse Completed";
-        	else if (position == 4)
-        	    return "Temp";
+        	//else if (position == 4)
+        	//    return "Temp";
         	else
         		return "Error";
         }
@@ -146,7 +147,7 @@ public class MainActivity extends FragmentActivity {
       		super.onResume();
     	 }
     }    
-    
+/*    
     public static class TempFragment extends Fragment {
     	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     		View rootView = inflater.inflate(R.layout.fragment_temp, container, false);
@@ -196,4 +197,5 @@ public class MainActivity extends FragmentActivity {
 			return rootView;
     	}
     }
+*/
 }
