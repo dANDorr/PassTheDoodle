@@ -27,6 +27,8 @@
     <string name="title_activity_vc">Finished</string>
     <string name="action_change_email_short">Change email</string>
     <string name="email_status_changing">Changing email&#8230;</string>
+    <string name="action_help">How to play</string>
+    <string name="action_log_out_short">Log out</string>
     
     <string name="hue_view_content_desc">Hue image</string>
     <string name="hue_cursor_content_desc">Hue image cursor</string>

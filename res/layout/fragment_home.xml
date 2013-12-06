@@ -51,13 +51,23 @@
                 android:onClick="goLogin"
                 android:text="@string/action_sign_in_short" />
             
+            <Button 
+                android:id="@+id/button_logout"
+                style="@style/btnStyleArsenic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/custom_btn_arsenic"
+                android:text="@string/action_log_out_short"
+                android:visibility="gone"/>
+            
             <Button
 		        android:id="@+id/button_guest"
 		        android:background="@drawable/custom_btn_arsenic"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:onClick="goRegister" 
-		        android:text="@string/action_register" 
+		        android:text="@string/action_help" 
 		        style="@style/btnStyleArsenic" />
 			<!--
 			    <Button

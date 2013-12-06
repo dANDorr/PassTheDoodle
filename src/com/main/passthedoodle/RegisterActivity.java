@@ -25,6 +25,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.LinearLayout.LayoutParams;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -57,7 +58,7 @@ public class RegisterActivity extends Activity {
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.activity_register);
-        
+        getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         //Set up register form
         newNameView = (EditText) findViewById(R.id.new_user);
         newPasswordView = (EditText) findViewById(R.id.new_password);

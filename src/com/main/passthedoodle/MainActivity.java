@@ -2,6 +2,7 @@ package com.main.passthedoodle;
 
 import android.os.Bundle;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -94,6 +95,15 @@ public class MainActivity extends FragmentActivity {
                     startActivity(intent);
                 }
             });
+    		rootView.findViewById(R.id.button_logout).setOnClickListener(new View.OnClickListener() {
+    			@Override
+    			public void onClick(View view) {
+    				getActivity().getSharedPreferences("ptd",0).edit().clear().commit();
+    				view.findViewById(R.id.button_logout).setVisibility(View.GONE);
+					View v = (View)view.getParent();
+					v.findViewById(R.id.button_login).setVisibility(View.VISIBLE);
+    			}
+    		});
     		rootView.findViewById(R.id.button_guest).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -103,6 +113,26 @@ public class MainActivity extends FragmentActivity {
             });
     		return rootView;
     	}
+    	/* @Override
+    	 public void onActivityCreated(Bundle savedInstanceState) {
+    		 super.onActivityCreated(savedInstanceState);
+    		 SharedPreferences pref = getActivity().getSharedPreferences("ptd",0);
+     		if(pref.contains("session"))
+     		{
+     			getActivity().findViewById(R.id.button_login).setVisibility(View.GONE);
+     			getActivity().findViewById(R.id.button_logout).setVisibility(View.VISIBLE);
+     		}
+    	 }*/
+    	 @Override
+    	 public void onResume() {
+    		 SharedPreferences pref = getActivity().getSharedPreferences("ptd",0);
+      		if(pref.contains("session"))
+      		{
+      			getActivity().findViewById(R.id.button_login).setVisibility(View.GONE);
+      			getActivity().findViewById(R.id.button_logout).setVisibility(View.VISIBLE);
+      		}
+      		super.onResume();
+    	 }
     }    
     
     public static class TempFragment extends Fragment {
