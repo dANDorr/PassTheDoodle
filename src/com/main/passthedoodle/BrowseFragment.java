@@ -1,5 +1,7 @@
 package com.main.passthedoodle;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,11 +12,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -25,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -55,6 +60,9 @@ import android.widget.Toast;
 
         // games JSONArray
         JSONArray games = null;
+        
+        ImageView img;
+        AlertDialog.Builder drawDialog;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,6 +105,7 @@ import android.widget.Toast;
             // launching Edit Game Screen
             lv.setOnItemClickListener(new OnItemClickListener() {
 
+                @SuppressLint("NewApi")
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long idd) {
                     // getting values from selected ListItem
@@ -108,9 +117,20 @@ import android.widget.Toast;
 
                     try {
                         if (!filename.equals("null")) {
-                            AlertDialog.Builder drawDialog = new AlertDialog.Builder(getActivity());
+                            drawDialog = new AlertDialog.Builder(getActivity());
                             drawDialog.setTitle("Describe this drawing?");
-                            drawDialog.setMessage("image: http://passthedoodle.com/i/" + filename);
+                            //drawDialog.setMessage("image: http://passthedoodle.com/i/" + filename);
+                            
+                            LayoutInflater inflater = LayoutInflater.from(getActivity());
+                            View viewImg = inflater.inflate(R.layout.image, null); // xml Layout file for imageView
+                            img = (ImageView) viewImg.findViewById(R.id.img_preview);
+                            
+                            String url = "http://passthedoodle.com/i/" + filename;
+                            
+                            new LoadImgPreview().execute(url);
+                            
+                            drawDialog.setView(viewImg);
+                            
                             drawDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
                                 public void onClick(DialogInterface dialog, int which){
                                     //start drawing activity
@@ -127,7 +147,7 @@ import android.widget.Toast;
                                     dialog.cancel();
                                 }
                             });
-                            drawDialog.show();
+                            
                         } else if (!description.equals("null")) {
                             AlertDialog.Builder textDialog = new AlertDialog.Builder(getActivity());
                             textDialog.setTitle("Draw this prompt?");
@@ -186,6 +206,10 @@ import android.widget.Toast;
         public void refreshList() {
         	gamesList.clear();
         	new LoadAllGames().execute();
+        }
+        
+        private Drawable grabImageFromUrl(String url) throws Exception {
+            return Drawable.createFromStream((InputStream)new URL(url).getContent(), "src");
         }
 
         /**
@@ -309,6 +333,41 @@ import android.widget.Toast;
                         setListAdapter(adapter);
                     }
                 });
+            }
+        }
+        
+        class LoadImgPreview extends AsyncTask<String, String, String> {
+
+            /**
+             * Before starting background thread Show Progress Dialog
+             * */
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                pDialog = new ProgressDialog(getActivity());
+                pDialog.setMessage("Loading...");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(false);
+                pDialog.show();
+            }
+
+            /**
+             * getting All games from url
+             * */
+            protected String doInBackground(String... args) {
+                try {
+                    Drawable drawable = grabImageFromUrl(args[0]);
+                    img.setImageDrawable(drawable);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+            
+            protected void onPostExecute(String file_url) {
+                // dismiss the dialog after getting all games
+                pDialog.dismiss();
+                drawDialog.show();
             }
         }
     }
