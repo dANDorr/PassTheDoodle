@@ -6,7 +6,7 @@
     <string name="prompt_new_username">Username</string>
     <string name="prompt_new_password">Password</string>
     <string name="prompt_confirm_password">Confirm Password</string>
-    <string name="prompt_new_email">Email</string>
+    <string name="prompt_new_email">Email (optional)</string>
     <string name="register_progress_registering">Registering&#8230;</string>
     <string name="action_register_short">Register</string>
     <string name="error_username_in_use">Username already in use</string>

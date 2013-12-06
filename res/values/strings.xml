@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">PassTheDoodle</string>
+    <string name="app_name">Pass The Doodle</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="dev_name">&#169; Shattered Screen Development</string>
