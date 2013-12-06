@@ -181,7 +181,7 @@ import android.widget.Toast;
                             String id = "Game " + c.getString(TAG_ID);
                             String name = c.getString(TAG_NAME);
                             
-                            String icon = Integer.toString(R.drawable.ptd_logo);
+                            String icon = Integer.toString(R.drawable.eye);
                             /*if (!filename.equals("null")) icon = Integer.toString(R.drawable.icon_text);
                             else if (!description.equals("null")) icon = Integer.toString(R.drawable.icon_pencil);
                             else icon = Integer.toString(R.drawable.icon_x);*/

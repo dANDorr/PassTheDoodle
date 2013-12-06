@@ -46,7 +46,9 @@
             android:layout_width="1dp"
             android:layout_height="fill_parent"
             android:contentDescription="@string/import_img"
-            android:src="@drawable/ic_action_upload" />
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/pictures_folder" />
 
         <ImageButton
             android:id="@+id/new_btn"
@@ -54,7 +56,9 @@
             android:layout_width="1dp"
             android:layout_height="fill_parent"
             android:contentDescription="@string/start_new"
-            android:src="@drawable/ic_action_new_picture" />
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/trash_can" />
 
         <ImageButton
             android:id="@+id/draw_btn"
@@ -62,7 +66,9 @@
             android:layout_width="1dp"
             android:layout_height="fill_parent"
             android:contentDescription="@string/brush"
-            android:src="@drawable/brush" />
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/brush2" />
 
         <ImageButton
             android:id="@+id/color_btn"
@@ -70,7 +76,9 @@
             android:layout_width="1dp"
             android:layout_height="fill_parent"
             android:contentDescription="@string/colorpicker"
-            android:src="@drawable/ic_menu_color_palette_holo_light" />
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/palette2" />
 
         <ImageButton
             android:id="@+id/save_btn"
@@ -78,7 +86,9 @@
             android:layout_width="1dp"
             android:layout_height="fill_parent"
             android:contentDescription="@string/save"
-            android:src="@drawable/ic_action_save" />
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/diskette" />
         
         <ImageButton
             android:id="@+id/submit_btn"
@@ -86,7 +96,9 @@
             android:layout_width="1dp"
             android:layout_height="fill_parent"
             android:contentDescription="@string/submit"
-            android:src="@drawable/ic_action_send_now" />
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/arrow_right2" />
         
     </LinearLayout>    
 

@@ -55,7 +55,7 @@ public class DrawingActivity extends FragmentActivity implements OnClickListener
 	//custom drawing view
 	private DrawingView drawView;
 	//buttons
-	private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn;
+	private ImageButton currPaint, drawBtn, colorBtn, newBtn, saveBtn;
 	//sizes
 	private float extraSmallBrush, smallBrush, mediumBrush, largeBrush, extraLargeBrush;
 
@@ -103,8 +103,9 @@ public class DrawingActivity extends FragmentActivity implements OnClickListener
 		drawView.setBrushSize(mediumBrush);
 
 		//color picker button
-		eraseBtn = (ImageButton)findViewById(R.id.color_btn);
-		eraseBtn.setOnClickListener(this);
+		colorBtn = (ImageButton)findViewById(R.id.color_btn);
+		colorBtn.setColorFilter(pickerColor, android.graphics.PorterDuff.Mode.MULTIPLY);
+		colorBtn.setOnClickListener(this);
 
 		//new button
 		newBtn = (ImageButton)findViewById(R.id.new_btn);
@@ -238,6 +239,7 @@ public class DrawingActivity extends FragmentActivity implements OnClickListener
 		            //MainActivity.this.mColor = color;
 		            pickerColor = color;
 		            drawView.setColor(color);
+		            colorBtn.setColorFilter(pickerColor, android.graphics.PorterDuff.Mode.MULTIPLY);
 		            //drawView.setColor("" + Color.HSVToColor(color));
 		        }
 		    };		    

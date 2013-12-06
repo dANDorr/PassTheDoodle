@@ -264,9 +264,9 @@ import android.widget.Toast;
                             String description = c.getString(TAG_DESC);
                             
                             String icon = "";
-                            if (!filename.equals("null")) icon = Integer.toString(R.drawable.icon_text);
-                            else if (!description.equals("null")) icon = Integer.toString(R.drawable.icon_pencil);
-                            else icon = Integer.toString(R.drawable.icon_x);
+                            if (!filename.equals("null")) icon = Integer.toString(R.drawable.pencil);
+                            else if (!description.equals("null")) icon = Integer.toString(R.drawable.brush2);
+                            else icon = Integer.toString(R.drawable.lock);
 
                             // creating new HashMap
                             HashMap<String, String> map = new HashMap<String, String>();
